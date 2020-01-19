@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  </head>
+  <body>
+    ログイン中...
+    <script>
+      var code = window.location.search
+        .split('&')
+        .filter(query => query.match(/code/))
+        .join()
+        .split('=')[1];
+      var token = window.location.hash
+        .split('&')
+        .filter(query => query.match(/access_token/))
+        .join()
+        .split('=')[1];
+      if (code) {
+        localStorage.setItem('code', code);
+      } else if (token) {
+        var expireBase = window.location.hash
+          .split('&')
+          .filter(query => query.match(/expires_in/))
+          .join()
+          .split('=')[1];
+
+        var state = window.location.hash
+          .split('&')
+          .filter(query => query.match(/state/))
+          .join()
+          .split('=')[1];
+
+        /** トークンの期限が切れる時刻 */
+        const expire = new Date().getTime() + Number(expireBase);
+
+        localStorage.setItem('discordToken', token);
+        localStorage.setItem('discordExpire', expire);
+        localStorage.setItem('discordState', state);
+      }
+      window.location.replace('../../');
+    </script>
+  </body>
+</html>

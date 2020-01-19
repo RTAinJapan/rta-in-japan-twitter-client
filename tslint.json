@@ -1,0 +1,33 @@
+{
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "linterOptions": {
+    "exclude": ["node_modules/**/*.ts", "node_modules/**/*.tsx", "coverage/lcov-report/*.js"]
+  },
+  "rulesDirectory": ["tslint-plugin-prettier"],
+  "rules": {
+    "prettier": [
+      true,
+      {
+        "semi": true,
+        "singleQuote": true,
+        "printWidth": 180,
+        "trailingComma": "all"
+      }
+    ],
+    "interface-name": false,
+    "no-console": false,
+    "no-implicit-any": false,
+    "no-unused-variable": [
+      true,
+      {
+        "ignore-pattern": ["^_"]
+      }
+    ],
+    "ordered-imports": false,
+    "object-literal-sort-keys": false,
+    "array-type": false,
+    "curly": false,
+    "triple-equals": true,
+    "interface-over-type-literal": false
+  }
+}

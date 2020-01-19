@@ -1,0 +1,53 @@
+{
+  "api": {
+    "twitterBase": "http://localhost:8000/api/twitter/",
+    "runner": ""
+  },
+  "discord": {
+    "config": {
+      "clientId": "",
+      "clientSecret": "",
+      "redirectUrl": "http://localhost:8080/login/discord",
+      "scope": "identify%20guilds"
+    },
+    "guild": "",
+    "roles": [],
+    "users": []
+  },
+  "tweetTemplate": {
+    "text": [
+      "次のタイムアタックは『{game}』\nカテゴリーは「{category}」\n走者は{runners}です。",
+      "次のタイムアタックは『{game}』\nカテゴリーは「{category}」\n走者は{runners}です。\n解説は{commentaries}です。",
+      "現在のタイムアタックは『{game}』\n\n",
+      "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}お疲れさまでした。\nクリアタイムはxx:xx:xxでした。"
+    ],
+    "footer": "配信はこちらから⇒https://www.twitch.tv/rtainjapan\n#RTAInJapan"
+  },
+  "link": [
+    {
+      "name": "RTA in Japan",
+      "url": "https://rtain.jp/",
+      "iconUrl": "./images/rtainjapan-icon.png"
+    },
+    {
+      "name": "RTA in Japan Twitter",
+      "url": "https://twitter.com/rtainjapan",
+      "iconUrl": "./images/twitter-icon.png"
+    },
+    {
+      "name": "RTA in Japan Twitch",
+      "url": "https://www.twitch.tv/rtainjapan",
+      "iconUrl": "./images/twitch-icon.png"
+    },
+    {
+      "name": "RTA in Japan Discord",
+      "url": "https://discord.gg/dqpB8y6",
+      "iconUrl": "./images/discord-icon.png"
+    },
+    {
+      "name": "RTA in Japan 2019(horaro)",
+      "url": "https://horaro.org/rtaij/rtaij2019",
+      "iconUrl": "./images/horaro-icon.png"
+    }
+  ]
+}
