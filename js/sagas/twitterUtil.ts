@@ -14,7 +14,7 @@ export const countStr = (baseStr: string): number => {
   // URL：11.5文字
 
   // URLを含んでいる数
-  const urls = baseStr.match(/https?:\/\/[^ ]+/g);
+  const urls = baseStr.match(/https?:\/\/[^\s]+/g);
   const urlNum = urls ? urls.length : 0;
 
   // URLの部分を除外して文字数カウントする
