@@ -18,7 +18,7 @@ export const countStr = (baseStr: string): number => {
   const urlNum = urls ? urls.length : 0;
 
   // URLの部分を除外して文字数カウントする
-  const pureStr = baseStr.replace(/https?:\/\/[^ ]+/g, '');
+  const pureStr = baseStr.replace(/https?:\/\/[^\s]+/g, '');
 
   // TODO: 改行も0.5文字換算だけど以下の正規表現だとほんのちょっと多くカウントされちゃう
   // 半角文字
