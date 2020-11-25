@@ -23,7 +23,9 @@
     * `roles` _String[]_ 権限ID
     * `users` _String[]_ この画面を操作できるユーザID
 * `tweetTemplate` _Object_ テンプレート
-  * `text` _String[]_ 
+  * `withCommentary` _String[]_ 
+  * `withOutCommentary` _String[]_ 
+  * `common` _String[]_ 
   * `footer` _String_ 
 * `link` _Object[]_ クライアントから見れるリンクの一覧。
   * `name` _String_ リンクの表示名
@@ -35,7 +37,7 @@
 * 別のリポジトリで管理
 
 ### 走者情報API
-* JSONP型で、データ部分は以下。
+* JSON型で、データ部分は以下。
 
 #### API
 * `status` _String_ okかerror
