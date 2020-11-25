@@ -16,6 +16,10 @@ const useStyles = makeStyles({
   button: {
     minWidth: '40px',
   },
+  list: {
+    height: 'calc(100vh - 150px)',
+    overflowY: 'scroll',
+  },
   tweet: {
     display: 'flex',
     alignItems: 'center',
@@ -23,7 +27,8 @@ const useStyles = makeStyles({
     marginBottom: 2,
   },
   tweetContent: {
-    width: 'calc(100% - 40px)',
+    margin: 5,
+    width: '100%',
   },
 });
 
@@ -51,20 +56,22 @@ const TweetList: React.SFC<PropsType> = props => {
   return (
     <Paper className={classes.root}>
       {props.tweets.length === 0 && <div className={classes.tweetContent}>{label.noTweet}</div>}
-      {props.tweets.map((item, index) => (
-        <div className={classes.tweet} key={`${item.id_str}_${index}`}>
-          <Tooltip title={label.delete}>
-            <span>
-              <Fab className={classes.button} color={'secondary'} size={'small'} onClick={handleDeleteButton(item.id_str)} disabled={!props.deleteTweet}>
-                <ClearIcon />
-              </Fab>
-            </span>
-          </Tooltip>
-          <div className={classes.tweetContent}>
-            <Tweet {...item} />
+      <div className={classes.list}>
+        {props.tweets.map((item, index) => (
+          <div className={classes.tweet} key={`${item.id_str}_${index}`}>
+            <Tooltip title={label.delete} style={{ display: props.deleteTweet ? 'block' : 'none' }}>
+              <span>
+                <Fab className={classes.button} color={'secondary'} size={'small'} onClick={handleDeleteButton(item.id_str)} disabled={!props.deleteTweet}>
+                  <ClearIcon />
+                </Fab>
+              </span>
+            </Tooltip>
+            <div className={classes.tweetContent}>
+              <Tweet {...item} />
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </Paper>
   );
 };

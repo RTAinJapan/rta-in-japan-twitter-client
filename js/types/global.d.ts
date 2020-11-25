@@ -37,7 +37,9 @@ export type Config = {
     users: string[];
   };
   tweetTemplate: {
-    text: string[];
+    withCommentary: string[];
+    withOutCommentary: string[];
+    common: string[];
     footer: string;
   };
   link: {

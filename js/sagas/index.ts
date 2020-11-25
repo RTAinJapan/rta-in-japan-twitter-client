@@ -4,7 +4,7 @@ import { confirmSaga } from './dialog';
 import { RootState } from '../reducers';
 import { PreviewFile, Config, GeneratorType } from '../types/global';
 import { loginCheck, logoutDiscord, oauthDiscord } from './discord';
-import { fetchJson, fetchJsonp } from './common';
+import { fetchJson } from './common';
 import { twitterApi } from './twitterUtil';
 import { Game } from '../types/api';
 
@@ -78,13 +78,12 @@ function* fetchGameListAndApplyState() {
     // ログイン状態でなければ終了
     const state: RootState = yield select();
     if (!state.reducer.discord.username) return;
+    console.log('走者データ取得');
 
     yield put(actions.changeNotify(true, 'info', '走者データ取得中'));
 
-    const result: {
-      data: { status: string; data: Game[] };
-    } = yield call(fetchJsonp, state.reducer.config.api.runner);
-    yield put(actions.updateGameList(result.data.data));
+    const result: { status: string; data: Game[] } = yield call(fetchJson, state.reducer.config.api.runner);
+    yield put(actions.updateGameList(result.data));
 
     yield put(actions.changeNotify(true, 'info', '走者データ取得完了'));
   } catch (error) {

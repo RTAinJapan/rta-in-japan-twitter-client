@@ -123,7 +123,32 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
         return prev + next;
       }, '');
 
-    for (const template of props.template.text) {
+    //
+    if (commentariesText) {
+      for (const template of props.template.withCommentary) {
+        let newTemplate = template.replace('{game}', gamename);
+        newTemplate = newTemplate.replace('{runners}', runnerText);
+        newTemplate = newTemplate.replace('{category}', category);
+        newTemplate = newTemplate.replace('{commentaries}', commentariesText);
+        newTemplate += '\n\n';
+        newTemplate += props.template.footer;
+
+        newTemplateList.push(newTemplate);
+      }
+    } else {
+      for (const template of props.template.withOutCommentary) {
+        let newTemplate = template.replace('{game}', gamename);
+        newTemplate = newTemplate.replace('{runners}', runnerText);
+        newTemplate = newTemplate.replace('{category}', category);
+        newTemplate = newTemplate.replace('{commentaries}', commentariesText);
+        newTemplate += '\n\n';
+        newTemplate += props.template.footer;
+
+        newTemplateList.push(newTemplate);
+      }
+    }
+
+    for (const template of props.template.common) {
       let newTemplate = template.replace('{game}', gamename);
       newTemplate = newTemplate.replace('{runners}', runnerText);
       newTemplate = newTemplate.replace('{category}', category);
@@ -133,6 +158,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
 
       newTemplateList.push(newTemplate);
     }
+
     setTemplate(newTemplateList);
   }, [templateGameIndex]);
 

@@ -10,6 +10,7 @@ export type Tweets = {
   /** ツイートID */
   id_str: string;
   text: string;
+  created_at: string;
   user: {
     created_at: string;
     id_str: string;

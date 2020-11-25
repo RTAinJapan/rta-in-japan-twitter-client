@@ -9,6 +9,11 @@ export const theme = createMuiTheme({
         width: '100%',
       },
     },
+    MuiTab: {
+      wrapper: {
+        whiteSpace: 'nowrap',
+      },
+    },
   },
   // MaterialUIのCSSのオンオフ切り替える
   props: {},

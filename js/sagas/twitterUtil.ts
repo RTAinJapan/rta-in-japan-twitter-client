@@ -6,6 +6,8 @@ import { TwitterAPI, Tweets } from '../types/api';
  * @param baseStr カウント対象の文字
  */
 export const countStr = (baseStr: string): number => {
+  if (baseStr.length === 0) return 0;
+
   // 文字数カウントのルール
   // アジア圏の表記だとMax140文字。(英語圏だと280文字で、要は280Byte相当)
   //
@@ -36,18 +38,21 @@ export const countStr = (baseStr: string): number => {
 
 const getStatusesUserTimeLine = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
   const url = `${hostBase}statuses/user_timeline`;
+  console.log(`Twitterデータ取得: ${url}`);
   const result = await fetchJson(url);
   return result;
 };
 
 const getStatusesMentionsTimeLine = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
   const url = `${hostBase}statuses/mentions_timeline`;
+  console.log(`Twitterデータ取得: ${url}`);
   const result = await fetchJson(url);
   return result;
 };
 
 const getStatusesHash = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
   const url = `${hostBase}statuses/hash`;
+  console.log(`Twitterデータ取得: ${url}`);
   const result = await fetchJson(url);
   return result;
 };

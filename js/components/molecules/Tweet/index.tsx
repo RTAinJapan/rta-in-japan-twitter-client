@@ -4,6 +4,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { Tweets } from '../../../types/api';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -14,6 +15,11 @@ const useStyles = makeStyles((theme: Theme) =>
     screenName: {
       marginLeft: 5,
       color: 'gray',
+    },
+    date: {
+      marginLeft: 5,
+      color: 'gray',
+      fontSize: '10px',
     },
   }),
 );
@@ -31,12 +37,17 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
       <Avatar src={props.user.profile_image_url_https} />
       <div style={{ marginLeft: 5 }}>
         <div>
-          <Typography style={{ fontWeight: 'bold' }} variant={'subtitle1'} display={'inline'}>
+          <Typography style={{ fontWeight: 'bold', fontSize: 'small' }} variant={'subtitle1'}>
             {props.user.name}
           </Typography>
           <span className={classes.screenName}>
-            <Typography variant={'caption'} display={'inline'}>
+            <Typography style={{ fontSize: 'xx-small' }} variant={'caption'}>
               @{props.user.screen_name}
+            </Typography>
+          </span>
+          <span className={classes.date}>
+            <Typography style={{ fontSize: 'xx-small' }} variant={'caption'}>
+              {moment(props.created_at).format('YYYY/MM/DD HH:mm:ss')}
             </Typography>
           </span>
         </div>

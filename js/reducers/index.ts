@@ -113,7 +113,9 @@ const initial: GlobalState = {
       users: [],
     },
     tweetTemplate: {
-      text: [],
+      withCommentary: [],
+      withOutCommentary: [],
+      common: [],
       footer: '',
     },
     link: [],

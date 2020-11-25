@@ -13,6 +13,7 @@ export const fetchJson = async (url: string) => {
     const config = await result.json();
     return config;
   } catch (e) {
+    console.error(e);
     throw new Error('通信エラーが発生しました。');
   }
 };
@@ -50,6 +51,7 @@ export const postJson = async (url: string, body: object) => {
     });
     return await result.json();
   } catch (error) {
+    console.error(error);
     throw new Error('通信エラーが発生しました。');
   }
 };

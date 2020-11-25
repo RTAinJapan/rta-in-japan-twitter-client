@@ -15,12 +15,15 @@
     "users": []
   },
   "tweetTemplate": {
-    "text": [
-      "次のタイムアタックは『{game}』\nカテゴリーは「{category}」\n走者は{runners}です。",
+    "withCommentary": [
       "次のタイムアタックは『{game}』\nカテゴリーは「{category}」\n走者は{runners}です。\n解説は{commentaries}です。",
-      "現在のタイムアタックは『{game}』\n\n",
+      "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}、解説の{commentaries}、お疲れさまでした。\nクリアタイムはxx:xx:xxでした。"
+    ],
+    "withOutCommentary": [
+      "次のタイムアタックは『{game}』\nカテゴリーは「{category}」\n走者は{runners}です。",
       "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}お疲れさまでした。\nクリアタイムはxx:xx:xxでした。"
     ],
+    "common": ["現在のタイムアタックは『{game}』\n\n"],
     "footer": "配信はこちらから⇒https://www.twitch.tv/rtainjapan\n#RTAInJapan"
   },
   "link": [
