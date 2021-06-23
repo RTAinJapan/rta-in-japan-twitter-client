@@ -1,18 +1,29 @@
 {
   "api": {
-    "twitterBase": "http://localhost:8000/api/twitter/",
-    "runner": ""
+    "twitterBase": "https://rtain.jp/api/ajax/?url=https://rtain.jp/api/twitter/",
+    "runner": "https://rtain.jp/api/ajax/?url=https://script.google.com/macros/s/AKfycbxdcOipT16kLLMSkyktIynLkM3PXYcekk8XDuKKgLKHVX24R7ogQ47MecR4PflvVII/exec"
   },
   "discord": {
     "config": {
-      "clientId": "",
+      "clientId": "627778242727641088",
       "clientSecret": "",
-      "redirectUrl": "http://localhost:8080/login/discord",
+      "redirectUrl": "https://rtain.jp/util/twitter/login/discord",
       "scope": "identify%20guilds"
     },
-    "guild": "",
-    "roles": [],
-    "users": []
+    "guild": "247368306896404480",
+    "roles": ["247369833300230144", "640861896995766272"],
+    "users": [
+      "153506819317301248",
+      "159600065017675778",
+      "142622240863813632",
+      "204527119445786626",
+      "258600299491491842",
+      "242075173275041792",
+      "131399322360217600",
+      "263950176950026250",
+      "163962550780821506",
+      "767386043531657216"
+    ]
   },
   "tweetTemplate": {
     "withCommentary": [
@@ -24,7 +35,7 @@
       "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}お疲れさまでした。\nクリアタイムはxx:xx:xxでした。"
     ],
     "common": ["現在のタイムアタックは『{game}』\n\n"],
-    "footer": "配信はこちらから⇒https://www.twitch.tv/rtainjapan\n#RTAInJapan"
+    "footer": "配信はこちらから⇒https://www.twitch.tv/rtainjapan\n#RTAinJapan"
   },
   "link": [
     {
@@ -46,11 +57,6 @@
       "name": "RTA in Japan Discord",
       "url": "https://discord.gg/dqpB8y6",
       "iconUrl": "./images/discord-icon.png"
-    },
-    {
-      "name": "RTA in Japan 2019(horaro)",
-      "url": "https://horaro.org/rtaij/rtaij2019",
-      "iconUrl": "./images/horaro-icon.png"
     }
   ]
 }

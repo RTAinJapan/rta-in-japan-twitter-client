@@ -14,7 +14,7 @@ export const fetchJson = async (url: string) => {
     return config;
   } catch (e) {
     console.error(e);
-    throw new Error('通信エラーが発生しました。');
+    throw new Error(`通信エラーが発生しました。 ${e.message}`);
   }
 };
 
@@ -50,9 +50,9 @@ export const postJson = async (url: string, body: object) => {
       body: JSON.stringify(body),
     });
     return await result.json();
-  } catch (error) {
-    console.error(error);
-    throw new Error('通信エラーが発生しました。');
+  } catch (e) {
+    console.error(e);
+    throw new Error(`通信エラーが発生しました。 ${e.message}`);
   }
 };
 
@@ -66,7 +66,8 @@ export const postFile = async (url: string, file: File) => {
       body: formData,
     });
     return await result.json();
-  } catch (error) {
-    throw new Error('通信エラーが発生しました。');
+  } catch (e) {
+    console.error(e);
+    throw new Error(`通信エラーが発生しました。 ${e.message}`);
   }
 };

@@ -26,10 +26,12 @@ type Runner = {
 };
 type Commentary = Runner;
 
+/** GASから取得するAPI */
 export type Game = {
   id: number;
   gamename: string;
   category: string;
+  gameAndCategory: string;
   runner: Runner[];
   commentary: Commentary[];
 };

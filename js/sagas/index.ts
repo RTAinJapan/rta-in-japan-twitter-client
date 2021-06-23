@@ -18,8 +18,10 @@ export default function* rootSaga() {
   yield takeEvery(actions.deleteMedia, deleteMedia);
 
   yield takeEvery(actions.logoutDiscord, logoutDiscord);
-  yield call(loginCheck);
-  // yield put(actions.storeDiscordUserName('テストユーザ'));
+
+  // yield call(loginCheck);
+  yield put(actions.storeDiscordUserName('テストユーザ'));
+
   yield call(fetchTweetListAndApplyState);
   yield call(fetchGameListAndApplyState);
 }
@@ -99,7 +101,7 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
   try {
     const state: RootState = yield select();
 
-    const result = yield call(confirmSaga, 'ツイートを送信します。よろしいですか？', 'info', `${action.payload}`);
+    const result: boolean = yield call(confirmSaga, 'ツイートを送信します。よろしいですか？', 'info', `${action.payload}`);
     if (!result) return;
 
     yield put(actions.updateStatus('posting'));
@@ -137,7 +139,7 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
     const state: RootState = yield select();
     const deleteTargetTweet = state.reducer.twitterTimeline.user.filter(tweet => tweet.id_str === action.payload);
 
-    const isContinue = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].text}`);
+    const isContinue: boolean = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].text}`);
     if (!isContinue) return;
     yield put(actions.changeNotify(true, 'info', '削除要求中'));
 

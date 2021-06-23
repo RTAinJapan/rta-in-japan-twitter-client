@@ -4,7 +4,8 @@ import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import * as actions from '../../../actions';
 import Modal from '../../molecules/Modal';
 import { RootState } from '../../../reducers';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Divider } from '@material-ui/core';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Divider, IconButton, Tooltip } from '@material-ui/core';
+import AttachFileIcon from '@material-ui/icons/AttachFile';
 import Dropzone from 'react-dropzone';
 import { countStr } from '../../../sagas/twitterUtil';
 
@@ -120,7 +121,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
         return text;
       })
       .reduce((prev, next) => {
-        return prev + next;
+        return prev + '、' + next;
       }, '');
 
     //
@@ -223,9 +224,11 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
             <section>
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
-                <Button size={'small'} variant={'contained'}>
-                  ファイル添付
-                </Button>
+                <Tooltip title="ファイル添付">
+                <IconButton>
+                  <AttachFileIcon fontSize="small" />
+                </IconButton>
+                </Tooltip>
               </div>
             </section>
           )}
@@ -291,12 +294,13 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
               </Select>
             </FormControl>
           </div>
-          {/* テキスト */}
-          <div style={{ padding: 5, height: 'calc(80vh - 55px)', overflowY: 'scroll' }}>
+
+          {/* テンプレートテキスト */}
+          <div style={{ padding: 5, height: 'calc(80vh - 85px)', overflowY: 'scroll' }}>
             {templateList.map((template, index) => (
               <div key={index.toString()} style={{ marginBottom: 20 }}>
                 <TextField
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', backgroundColor: '#ddd' }}
                   variant="outlined"
                   multiline={true}
                   InputProps={{
@@ -305,7 +309,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                   value={template}
                 />
                 <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                  <Button variant={'contained'} size={'small'} color={'primary'} onClick={handleTemplateApply(template)}>
+                  <Button variant={'contained'} size={'small'} color={'primary'} onClick={handleTemplateApply(template)} disabled={Number.isNaN(templateGameIndex)}>
                     反映
                   </Button>
                 </div>
@@ -324,7 +328,6 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
             ) : (
               <img className={classes.media} src={props.mediaList[previewMediaIndex].file.preview} />
             ))}
-          }
         </div>
       </Modal>
     </div>

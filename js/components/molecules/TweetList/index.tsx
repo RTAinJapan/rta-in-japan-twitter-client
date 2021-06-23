@@ -44,10 +44,6 @@ type PropsType = ComponentProps & ActionProps;
 const TweetList: React.SFC<PropsType> = props => {
   const classes = useStyles();
 
-  const handleDeleteButton = (id: string) => () => {
-    props.deleteTweet(id);
-  };
-
   const label = {
     delete: 'ツイート削除',
     noTweet: 'ツイートがありません',
@@ -59,15 +55,8 @@ const TweetList: React.SFC<PropsType> = props => {
       <div className={classes.list}>
         {props.tweets.map((item, index) => (
           <div className={classes.tweet} key={`${item.id_str}_${index}`}>
-            <Tooltip title={label.delete} style={{ display: props.deleteTweet ? 'block' : 'none' }}>
-              <span>
-                <Fab className={classes.button} color={'secondary'} size={'small'} onClick={handleDeleteButton(item.id_str)} disabled={!props.deleteTweet}>
-                  <ClearIcon />
-                </Fab>
-              </span>
-            </Tooltip>
             <div className={classes.tweetContent}>
-              <Tweet {...item} />
+              <Tweet {...item} deleteTweet={props.deleteTweet} />
             </div>
           </div>
         ))}
