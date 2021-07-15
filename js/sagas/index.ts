@@ -138,6 +138,8 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
     // 各種初期化
     yield put(actions.storeMedia([]));
     yield put(actions.updateTweetText(''));
+    yield put(actions.deleteAttachUrl());
+    yield put(actions.deleteReplyTweet());
     // 完了通知
     yield put(actions.changeNotify(true, 'info', 'ツイートしました。'));
     yield put(actions.updateStatus('ok'));
@@ -154,26 +156,29 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
   try {
     const state: RootState = yield select();
     const deleteTargetTweet = state.reducer.twitterTimeline.user.filter((tweet) => tweet.id_str === action.payload);
-    const tweetText = deleteTargetTweet[0].text;
-    const url = `https://twitter.com/${deleteTargetTweet[0].user.screen_name}/status/${deleteTargetTweet[0].id_str}`;
-    yield call(alertSaga, `このツイートを削除したい場合、以下を運営に連絡してください`, 'info', `${url}\n\n${tweetText}`);
 
-    // const isContinue: boolean = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].text}`);
-    // if (!isContinue) return;
-    // yield put(actions.changeNotify(true, 'info', '削除要求中'));
+    if (state.reducer.config.twitter.isAllowDeleteTweet) {
+      const isContinue: boolean = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].text}`);
+      if (!isContinue) return;
+      yield put(actions.changeNotify(true, 'info', '削除要求中'));
 
-    // yield put(actions.updateStatus('posting'));
-    // // 削除実行
-    // const result: GeneratorType<typeof twitterApi.postStatusesDestroy> = yield call(twitterApi.postStatusesDestroy, state.reducer.config.api.twitterBase, action.payload);
-    // if (result.error) throw result.error;
+      yield put(actions.updateStatus('posting'));
+      // 削除実行
+      const result: GeneratorType<typeof twitterApi.postStatusesDestroy> = yield call(twitterApi.postStatusesDestroy, state.reducer.config.api.twitterBase, action.payload);
+      if (result.error) throw result.error;
 
-    // // 新しいリストを取得
-    // const newTweetList: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
-    // if (newTweetList.error) throw newTweetList.error;
-    // yield put(actions.updateTweetList(newTweetList.data, 'user'));
+      // 新しいリストを取得
+      const newTweetList: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
+      if (newTweetList.error) throw newTweetList.error;
+      yield put(actions.updateTweetList(newTweetList.data, 'user'));
 
-    // yield put(actions.changeNotify(true, 'info', '削除完了'));
-    // yield put(actions.updateStatus('ok'));
+      yield put(actions.changeNotify(true, 'info', '削除完了'));
+      yield put(actions.updateStatus('ok'));
+    } else {
+      const tweetText = deleteTargetTweet[0].text;
+      const url = `https://twitter.com/${deleteTargetTweet[0].user.screen_name}/status/${deleteTargetTweet[0].id_str}`;
+      yield call(alertSaga, `このツイートを削除したい場合、以下を運営に連絡してください`, 'info', `${url}\n\n${tweetText}`);
+    }
   } catch (error) {
     yield call(errorHandler, error);
   }

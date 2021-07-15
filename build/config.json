@@ -3,6 +3,9 @@
     "twitterBase": "http://localhost:8000/api/twitter/",
     "runner": ""
   },
+  "twitter": {
+    "isAllowDeleteTweet": false
+  },
   "discord": {
     "config": {
       "clientId": "",
@@ -24,7 +27,7 @@
       "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}お疲れさまでした。\nクリアタイムはxx:xx:xxでした。"
     ],
     "common": ["現在のタイムアタックは『{game}』\n\n"],
-    "footer": "配信はこちらから⇒https://www.twitch.tv/rtainjapan\n#RTAInJapan"
+    "footer": "配信はこちらから⇒https://www.twitch.tv/rtainjapan\n#RTAinJapan"
   },
   "link": [
     {
@@ -46,11 +49,6 @@
       "name": "RTA in Japan Discord",
       "url": "https://discord.gg/dqpB8y6",
       "iconUrl": "./images/discord-icon.png"
-    },
-    {
-      "name": "RTA in Japan 2019(horaro)",
-      "url": "https://horaro.org/rtaij/rtaij2019",
-      "iconUrl": "./images/horaro-icon.png"
     }
   ]
 }

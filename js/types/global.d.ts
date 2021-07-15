@@ -20,6 +20,10 @@ export type Config = {
     /** 走者情報APIのURL */
     runner: string;
   };
+  twitter: {
+    /** ツイート削除の許可 */
+    isAllowDeleteTweet: boolean;
+  };
   /** Discordの設定 */
   discord: {
     config: {

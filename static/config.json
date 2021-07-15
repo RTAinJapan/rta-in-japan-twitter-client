@@ -3,6 +3,9 @@
     "twitterBase": "https://rtain.jp/api/ajax/?url=https://rtain.jp/api/twitter/",
     "runner": "https://rtain.jp/api/ajax/?url=https://script.google.com/macros/s/AKfycbxdcOipT16kLLMSkyktIynLkM3PXYcekk8XDuKKgLKHVX24R7ogQ47MecR4PflvVII/exec"
   },
+  "twitter": {
+    "isAllowDeleteTweet": false
+  },
   "discord": {
     "config": {
       "clientId": "627778242727641088",
