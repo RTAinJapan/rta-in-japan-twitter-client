@@ -6,8 +6,10 @@ import Modal from '../../molecules/Modal';
 import { RootState } from '../../../reducers';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Divider, IconButton, Tooltip } from '@material-ui/core';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
+import DeleteIcon from '@material-ui/icons/Cancel';
 import Dropzone from 'react-dropzone';
 import { countStr } from '../../../sagas/twitterUtil';
+import Tweet from '../../molecules/Tweet';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -94,7 +96,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
 
   // テンプレート文の生成
   React.useEffect(() => {
-    const newTemplateList = [];
+    const newTemplateList: string[] = [];
     const selectedGame = props.gameList[templateGameIndex];
     /** ゲーム名 */
     const gamename = selectedGame ? selectedGame.gamename : '';
@@ -103,7 +105,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
     /** 走者 */
     const runners = selectedGame ? selectedGame.runner : [];
     const runnerText = runners
-      .map(runner => {
+      .map((runner) => {
         let text = `${runner.username}さん`;
         if (runner.twitterid) text += `(@${runner.twitterid})`;
         return text;
@@ -115,12 +117,13 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
     /** 解説 */
     const commentaries = selectedGame ? selectedGame.commentary : [];
     const commentariesText = commentaries
-      .map(commentary => {
+      .map((commentary) => {
         let text = `${commentary.username}さん`;
         if (commentary.twitterid) text += `(@${commentary.twitterid})`;
         return text;
       })
-      .reduce((prev, next) => {
+      .reduce((prev, next, index) => {
+        if (index === 0) return prev + next;
         return prev + '、' + next;
       }, '');
 
@@ -217,6 +220,38 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
           )}
         </Dropzone>
       </div>
+      {/* 返信 */}
+      {props.replyTweet ? (
+        <div style={{ backgroundColor: 'lightgray', padding: 10 }}>
+          <div>返信</div>
+          <div style={{ display: 'flex' }}>
+            <Tooltip title="返信を解除">
+              <IconButton onClick={() => props.deleteReplyTweet()}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            <Tweet id_str={props.replyTweet.id_str} text={props.replyTweet.text} created_at={props.replyTweet.created_at} user={props.replyTweet.user} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
+      {/* 引用RT */}
+      {props.retweet ? (
+        <div style={{ backgroundColor: 'lightgray', padding: 10 }}>
+          <div>引用RT</div>
+          <div style={{ display: 'flex' }}>
+            <Tooltip title="引用RTを解除">
+              <IconButton onClick={() => props.deleteRetweet()}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            <Tweet id_str={props.retweet.id_str} text={props.retweet.text} created_at={props.retweet.created_at} user={props.retweet.user} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       {/* アップロード */}
       <div>
         <Dropzone accept="image/gif,image/jpeg,image/png,image/jpg,video/mp4" onDrop={handleDrop}>
@@ -225,9 +260,9 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
                 <Tooltip title="ファイル添付">
-                <IconButton>
-                  <AttachFileIcon fontSize="small" />
-                </IconButton>
+                  <IconButton>
+                    <AttachFileIcon fontSize="small" />
+                  </IconButton>
                 </Tooltip>
               </div>
             </section>
@@ -338,6 +373,8 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
 const mapStateToProps = (state: RootState) => {
   return {
     tweetText: state.reducer.post.text,
+    replyTweet: state.reducer.post.in_reply_to_status_id,
+    retweet: state.reducer.post.attachment_url,
     mediaList: state.reducer.post.media,
     gameList: state.reducer.game,
     template: state.reducer.config.tweetTemplate,
@@ -352,9 +389,8 @@ const mapDispatchToProps = {
   submitTweet: actions.submitTweet,
   uploadMedia: actions.uploadMedia,
   deleteMedia: actions.deleteMedia,
+  deleteReplyTweet: actions.deleteReplyTweet,
+  deleteRetweet: actions.deleteAttachUrl,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(TweetForm);
+export default connect(mapStateToProps, mapDispatchToProps)(TweetForm);

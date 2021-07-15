@@ -37,11 +37,13 @@ export type ComponentProps = {
 };
 export type ActionProps = {
   deleteTweet?: any;
+  replyTweet?: any;
+  retweet?: any;
 };
 
 type PropsType = ComponentProps & ActionProps;
 
-const TweetList: React.SFC<PropsType> = props => {
+const TweetList: React.SFC<PropsType> = (props) => {
   const classes = useStyles();
 
   const label = {
@@ -56,7 +58,7 @@ const TweetList: React.SFC<PropsType> = props => {
         {props.tweets.map((item, index) => (
           <div className={classes.tweet} key={`${item.id_str}_${index}`}>
             <div className={classes.tweetContent}>
-              <Tweet {...item} deleteTweet={props.deleteTweet} />
+              <Tweet {...item} deleteTweet={props.deleteTweet} replyTweet={props.replyTweet} retweet={props.retweet} />
             </div>
           </div>
         ))}

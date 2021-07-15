@@ -1,6 +1,6 @@
 import { select, call, put, take, takeEvery, race } from 'redux-saga/effects';
 import * as actions from '../actions';
-import { confirmSaga } from './dialog';
+import { alertSaga, confirmSaga } from './dialog';
 import { RootState } from '../reducers';
 import { PreviewFile, Config, GeneratorType } from '../types/global';
 import { loginCheck, logoutDiscord, oauthDiscord } from './discord';
@@ -16,6 +16,9 @@ export default function* rootSaga() {
   yield takeEvery(actions.deleteTweet, deleteTweet);
   yield takeEvery(actions.uploadMedia, uploadMedia);
   yield takeEvery(actions.deleteMedia, deleteMedia);
+
+  yield takeEvery(actions.addReplyTweet, addReplyTweet);
+  yield takeEvery(actions.addAttachUrl, addRetweet);
 
   yield takeEvery(actions.logoutDiscord, logoutDiscord);
 
@@ -85,6 +88,9 @@ function* fetchGameListAndApplyState() {
     yield put(actions.changeNotify(true, 'info', '走者データ取得中'));
 
     const result: { status: string; data: Game[] } = yield call(fetchJson, state.reducer.config.api.runner);
+    if (result.status !== 'ok') {
+      throw new Error('走者情報の取得に失敗');
+    }
     yield put(actions.updateGameList(result.data));
 
     yield put(actions.changeNotify(true, 'info', '走者データ取得完了'));
@@ -107,13 +113,23 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
     yield put(actions.updateStatus('posting'));
     yield put(actions.updateTweetText(action.payload));
 
-    const mediaIds: string[] = state.reducer.post.media.map(media => media.media_id_string);
+    const mediaIds: string[] = state.reducer.post.media.map((media) => media.media_id_string);
+
+    const in_reply_to_status_id = state.reducer.post.in_reply_to_status_id ? state.reducer.post.in_reply_to_status_id.id_str : null;
+    let attachment_url = '';
+    if (state.reducer.post.attachment_url) {
+      const id = state.reducer.post.attachment_url.id_str;
+      const screenName = state.reducer.post.attachment_url.user.screen_name;
+      attachment_url = `https://twitter.com/${screenName}/statuses/${id}`;
+    }
 
     const postResult: GeneratorType<typeof twitterApi.postStatusesUpdate> = yield call(
       twitterApi.postStatusesUpdate,
       state.reducer.config.api.twitterBase,
       action.payload,
       mediaIds,
+      in_reply_to_status_id,
+      attachment_url,
     );
     if (postResult.error) throw postResult.error;
 
@@ -137,24 +153,27 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
 function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
   try {
     const state: RootState = yield select();
-    const deleteTargetTweet = state.reducer.twitterTimeline.user.filter(tweet => tweet.id_str === action.payload);
+    const deleteTargetTweet = state.reducer.twitterTimeline.user.filter((tweet) => tweet.id_str === action.payload);
+    const tweetText = deleteTargetTweet[0].text;
+    const url = `https://twitter.com/${deleteTargetTweet[0].user.screen_name}/status/${deleteTargetTweet[0].id_str}`;
+    yield call(alertSaga, `このツイートを削除したい場合、以下を運営に連絡してください`, 'info', `${url}\n\n${tweetText}`);
 
-    const isContinue: boolean = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].text}`);
-    if (!isContinue) return;
-    yield put(actions.changeNotify(true, 'info', '削除要求中'));
+    // const isContinue: boolean = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].text}`);
+    // if (!isContinue) return;
+    // yield put(actions.changeNotify(true, 'info', '削除要求中'));
 
-    yield put(actions.updateStatus('posting'));
-    // 削除実行
-    const result: GeneratorType<typeof twitterApi.postStatusesDestroy> = yield call(twitterApi.postStatusesDestroy, state.reducer.config.api.twitterBase, action.payload);
-    if (result.error) throw result.error;
+    // yield put(actions.updateStatus('posting'));
+    // // 削除実行
+    // const result: GeneratorType<typeof twitterApi.postStatusesDestroy> = yield call(twitterApi.postStatusesDestroy, state.reducer.config.api.twitterBase, action.payload);
+    // if (result.error) throw result.error;
 
-    // 新しいリストを取得
-    const newTweetList: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
-    if (newTweetList.error) throw newTweetList.error;
-    yield put(actions.updateTweetList(newTweetList.data, 'user'));
+    // // 新しいリストを取得
+    // const newTweetList: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
+    // if (newTweetList.error) throw newTweetList.error;
+    // yield put(actions.updateTweetList(newTweetList.data, 'user'));
 
-    yield put(actions.changeNotify(true, 'info', '削除完了'));
-    yield put(actions.updateStatus('ok'));
+    // yield put(actions.changeNotify(true, 'info', '削除完了'));
+    // yield put(actions.updateStatus('ok'));
   } catch (error) {
     yield call(errorHandler, error);
   }
@@ -200,7 +219,7 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
 
       // リストに登録できるのは、動画1 or 画像1～4
       // 動画があるのに何か指定された
-      const isOrgMediaIncludeVideo = orgMedia.filter(media => media.file.type.includes('video')).length > 0;
+      const isOrgMediaIncludeVideo = orgMedia.filter((media) => media.file.type.includes('video')).length > 0;
       if (isOrgMediaIncludeVideo) throw new Error('アップロードできるのは動画1つ、もしくは画像4つまでです。');
 
       // 何か登録されてるのに動画が指定された
@@ -236,4 +255,12 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
   } catch (error) {
     yield call(errorHandler, error);
   }
+}
+
+function* addReplyTweet() {
+  yield put(actions.changeNotify(true, 'info', '返信先ツイートをセットしました'));
+}
+
+function* addRetweet() {
+  yield put(actions.changeNotify(true, 'info', '引用RTをセットしました'));
 }

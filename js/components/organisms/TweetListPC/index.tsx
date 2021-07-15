@@ -41,7 +41,7 @@ const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
       <div className={classes.column}>
         <Typography variant={'h6'}>運営ツイート</Typography>
         <div className={classes.tweetColumn}>
-          <TweetList tweets={props.list.user} deleteTweet={props.deleteTweet} />
+          <TweetList tweets={props.list.user} deleteTweet={props.deleteTweet} replyTweet={props.replyTweet} retweet={props.retweet} />
         </div>
       </div>
       <div className={classes.column}>
@@ -73,10 +73,9 @@ const mapStateToProps = (state: RootState) => {
 // action
 const mapDispatchToProps = {
   deleteTweet: actions.deleteTweet,
+  retweet: actions.addAttachUrl,
+  replyTweet: actions.addReplyTweet,
   reloadTweet: actions.reloadTweetList,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(TweetListPC);
+export default connect(mapStateToProps, mapDispatchToProps)(TweetListPC);

@@ -132,7 +132,4 @@ const mapDispatchToProps = {
   loginDiscord: actions.loginDiscord,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

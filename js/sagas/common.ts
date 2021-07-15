@@ -7,11 +7,11 @@ import fetchJsonpLib from 'fetch-jsonp';
  * @throws 通信エラー
  * @throws JSON変換エラー
  */
-export const fetchJson = async (url: string) => {
+export const fetchJson = async <T>(url: string): Promise<T> => {
   try {
     const result = await fetch(url);
     const config = await result.json();
-    return config;
+    return config as T;
   } catch (e) {
     console.error(e);
     throw new Error(`通信エラーが発生しました。 ${e.message}`);
@@ -27,19 +27,19 @@ export function fetchJsonp(url: string): Promise<{ data: object }> {
     fetchJsonpLib(url, {
       jsonpCallback: 'callback',
     })
-      .then(response => {
+      .then((response) => {
         return response.json();
       })
-      .then(json => {
+      .then((json) => {
         resolve({ data: json });
       })
-      .catch(error => {
+      .catch((error) => {
         reject({ error });
       });
   });
 }
 
-export const postJson = async (url: string, body: object) => {
+export const postJson = async <T>(url: string, body: object): Promise<T> => {
   try {
     const result = await fetch(url, {
       method: 'POST',
@@ -49,14 +49,14 @@ export const postJson = async (url: string, body: object) => {
       },
       body: JSON.stringify(body),
     });
-    return await result.json();
+    return (await result.json()) as T;
   } catch (e) {
     console.error(e);
     throw new Error(`通信エラーが発生しました。 ${e.message}`);
   }
 };
 
-export const postFile = async (url: string, file: File) => {
+export const postFile = async <T>(url: string, file: File): Promise<T> => {
   try {
     const formData = new FormData();
     formData.append(file.name, file);
@@ -65,7 +65,7 @@ export const postFile = async (url: string, file: File) => {
       method: 'POST',
       body: formData,
     });
-    return await result.json();
+    return (await result.json()) as T;
   } catch (e) {
     console.error(e);
     throw new Error(`通信エラーが発生しました。 ${e.message}`);

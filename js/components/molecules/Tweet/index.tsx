@@ -10,6 +10,7 @@ import RepeatIcon from '@material-ui/icons/Repeat';
 import ReplyIcon from '@material-ui/icons/Reply';
 import { Tweets } from '../../../types/api';
 import moment from 'moment';
+import * as actions from '../../../actions';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,18 +33,28 @@ const useStyles = makeStyles((theme: Theme) =>
 export type ComponentProps = Tweets;
 
 type ActionProps = {
-  replyTweet?: any;
-  retweet?: any;
-  deleteTweet?: any;
+  replyTweet?: typeof actions.addReplyTweet;
+  retweet?: typeof actions.addAttachUrl;
+  deleteTweet?: typeof actions.deleteTweet;
 };
 
 type PropsType = ComponentProps & ActionProps;
 const Tweet: React.SFC<PropsType> = (props: PropsType) => {
   const classes = useStyles({});
 
-  const handleReplyButton = (id: string) => () => props.replyTweet(id);
-  const handleRTButton = (id: string) => () => props.retweet(id);
-  const handleDeleteButton = (id: string) => () => props.deleteTweet(id);
+  const handleReplyButton = (id: string) => () => {
+    if (props.replyTweet) {
+      props.replyTweet(props);
+    }
+  };
+  const handleRTButton = (id: string) => () => {
+    if (props.retweet) {
+      props.retweet(props);
+    }
+  };
+  const handleDeleteButton = (id: string) => () => {
+    if (props.deleteTweet) props.deleteTweet(id);
+  };
 
   return (
     <Paper className={classes.root}>
@@ -77,7 +88,7 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
             </span>
           </Tooltip>
 
-          <Tooltip title={'リツイート'}>
+          <Tooltip title={'引用リツイート'}>
             <span>
               <IconButton color={'default'} size={'small'} onClick={handleRTButton(props.id_str)} disabled={!props.deleteTweet}>
                 <RepeatIcon />
