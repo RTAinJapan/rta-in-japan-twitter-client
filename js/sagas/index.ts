@@ -22,8 +22,8 @@ export default function* rootSaga() {
 
   yield takeEvery(actions.logoutDiscord, logoutDiscord);
 
-  // yield call(loginCheck);
-  yield put(actions.storeDiscordUserName('テストユーザ'));
+  yield call(loginCheck);
+  // yield put(actions.storeDiscordUserName('テストユーザ'));
 
   yield call(fetchTweetListAndApplyState);
   yield call(fetchGameListAndApplyState);
