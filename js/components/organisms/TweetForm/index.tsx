@@ -205,8 +205,8 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                 <TextField
                   label="ツイート内容"
                   multiline={true}
-                  rows={'3'}
-                  rowsMax="6"
+                  rows="4"
+                  rowsMax="8"
                   value={tweet}
                   onChange={handleChange}
                   className={classes.textField}

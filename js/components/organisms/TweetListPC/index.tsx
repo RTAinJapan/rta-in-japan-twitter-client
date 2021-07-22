@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: 5,
     },
     tweetColumn: {
-      height: 'calc(100vh - 150px)',
+      height: 'calc(100vh - 170px)',
     },
     reloadButton: {
       position: 'fixed',

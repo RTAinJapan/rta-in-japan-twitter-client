@@ -120,7 +120,7 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
     if (state.reducer.post.attachment_url) {
       const id = state.reducer.post.attachment_url.id_str;
       const screenName = state.reducer.post.attachment_url.user.screen_name;
-      attachment_url = `https://twitter.com/${screenName}/statuses/${id}`;
+      attachment_url = `https://twitter.com/${screenName}/status/${id}`;
     }
 
     const postResult: GeneratorType<typeof twitterApi.postStatusesUpdate> = yield call(

@@ -1,9 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Tweet from '../Tweet';
-import ClearIcon from '@material-ui/icons/Clear';
-import Fab from '@material-ui/core/Fab';
-import Tooltip from '@material-ui/core/Tooltip';
 import Paper from '@material-ui/core/Paper';
 import { Tweets } from '../../../types/api';
 
@@ -17,7 +14,7 @@ const useStyles = makeStyles({
     minWidth: '40px',
   },
   list: {
-    height: 'calc(100vh - 150px)',
+    height: 'calc(100vh - 180px)',
     overflowY: 'scroll',
   },
   tweet: {

@@ -73,6 +73,7 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
   return (
     <div className={classes.root}>
       <div className={classes.content}>
+        <div className={'SW-update-dialog'} style={{ textAlign: 'center' }} />
         {props.discord.username ? (
           <NavTabs tabs={tabs} style={{ top: 0 }}>
             {/* 投稿 */}

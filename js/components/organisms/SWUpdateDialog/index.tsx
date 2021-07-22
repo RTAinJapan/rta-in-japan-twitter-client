@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 export const SWUpdateDialog: React.FC<{ registration: ServiceWorkerRegistration }> = ({ registration }) => {
   const [show, setShow] = useState(!!registration.waiting);
   const style: React.CSSProperties = {
-    width: '100%',
-    background: 'white',
+    width: 'calc(100% - 10px)',
+    background: 'gray',
+    padding: 5,
   };
   const handleUpdate = () => {
     if (registration.waiting) registration.waiting.postMessage({ type: 'SKIP_WAITING' });
@@ -14,7 +15,7 @@ export const SWUpdateDialog: React.FC<{ registration: ServiceWorkerRegistration 
 
   return show ? (
     <div style={style}>
-      <span>更新があります</span>
+      <span style={{ color: 'white' }}>クライアントに更新があります</span>
       <button onClick={handleUpdate}>アップデート</button>
     </div>
   ) : (

@@ -127,6 +127,37 @@ const postStatusesDestroy = async (hostBase: string, id: string): Promise<Twitte
   return result as TwitterAPI<undefined>;
 };
 
+export const tweetToUrl = (tweet: Tweets): string => {
+  const url = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`;
+
+  return url;
+};
+
+export const tweetToReplyUrl = (tweet: Tweets): string => {
+  if (tweet.in_reply_to_screen_name) {
+    return `https://twitter.com/${tweet.in_reply_to_screen_name}/status/${tweet.in_reply_to_status_id_str}`;
+  } else {
+    return '';
+  }
+};
+
+export const tweetTextUrlReplace = (tweet: Tweets): string => {
+  let text = tweet.text;
+  try {
+    if (tweet.entities) {
+      for (const urlinfo of tweet.entities.urls) {
+        const replaceTarget = urlinfo.url;
+        const replaceUrl = urlinfo.expanded_url;
+        text = text.replace(replaceTarget, replaceUrl);
+      }
+    }
+  } catch (e) {
+    // 何かあったらしい
+  }
+
+  return text;
+};
+
 export const twitterApi = {
   getStatusesUserTimeLine,
   getStatusesMentionsTimeLine,
