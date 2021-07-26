@@ -207,8 +207,6 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
   try {
     const state: RootState = yield select();
     const orgMedia = state.reducer.post.media;
-    const nowMedia = action.payload[0];
-
     // 何かやってる最中は処理終了
     if (['posting', 'uploading'].includes(state.reducer.status)) return;
 
@@ -217,44 +215,61 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
       // 規定の種別以外のファイル
       if (action.payload.length === 0) throw new Error('不正な拡張子のファイルです。');
 
-      // 同名のファイルは不可
-      for (const media of orgMedia) {
-        if (media.file.name === nowMedia.name) throw new Error('同名のファイルは選択できません。');
+      const tempMedia: File[] = orgMedia.map((item) => item.file);
+
+      for (const nowMedia of action.payload) {
+        console.log(`file: ${nowMedia.name}`);
+        // 同名のファイルは不可
+        console.log('ファイル名チェック');
+        if (tempMedia.map((item) => item.name).includes(nowMedia.name)) throw new Error('同名のファイルは選択できません。');
+
+        // リストに登録できるのは、動画1 or 画像1～4
+        console.log('整合性チェック1');
+        // 動画があるのに何か指定された
+        const isOrgMediaIncludeVideo = tempMedia.filter((media) => media.type.includes('video')).length > 0;
+        if (isOrgMediaIncludeVideo) throw new Error('アップロードできるのは動画1つ、もしくは画像4つまでです。');
+
+        // 何か登録されてるのに動画が指定された
+        console.log('整合性チェック2');
+        const isNowMediaIncludeVideo = nowMedia.type.includes('video');
+        if (tempMedia.length > 0 && isNowMediaIncludeVideo) throw new Error('アップロードできるのは動画1つ、もしくは画像4つまでです。');
+
+        // なんやかんやで合計が4つ以上になりそう
+        console.log('整合性チェック3');
+        if (tempMedia.length >= 4) throw new Error('アップロードできるのは動画1つ、もしくは画像4つまでです。');
+
+        tempMedia.push(nowMedia);
       }
-
-      // リストに登録できるのは、動画1 or 画像1～4
-      // 動画があるのに何か指定された
-      const isOrgMediaIncludeVideo = orgMedia.filter((media) => media.file.type.includes('video')).length > 0;
-      if (isOrgMediaIncludeVideo) throw new Error('アップロードできるのは動画1つ、もしくは画像4つまでです。');
-
-      // 何か登録されてるのに動画が指定された
-      const isNowMediaIncludeVideo = nowMedia.type.includes('video');
-      if (orgMedia.length > 0 && isNowMediaIncludeVideo) throw new Error('アップロードできるのは動画1つ、もしくは画像4つまでです。');
-
-      // なんやかんやで合計が4つ以上になりそう
-      if (orgMedia.length === 4) throw new Error('アップロードできるのは動画1つ、もしくは画像4つまでです。');
     } catch (e) {
       yield put(actions.changeNotify(true, 'warning', e.message));
       return;
     }
 
-    (nowMedia as PreviewFile).preview = URL.createObjectURL(nowMedia);
+    // アップロード
+    for (const nowMedia of action.payload) {
+      const state: RootState = yield select();
+      const orgMedia = state.reducer.post.media;
 
-    console.debug(nowMedia);
-    yield put(actions.updateStatus('uploading'));
-    yield put(actions.changeNotify(true, 'info', 'ファイルアップロード中', false));
-    const uploadResult: GeneratorType<typeof twitterApi.postMediaUpload> = yield call(twitterApi.postMediaUpload, state.reducer.config.api.twitterBase, nowMedia);
-    if (uploadResult.error) throw uploadResult.error;
+      (nowMedia as PreviewFile).preview = URL.createObjectURL(nowMedia);
 
-    yield put(
-      actions.storeMedia([
-        ...orgMedia,
-        {
-          file: nowMedia as PreviewFile,
-          media_id_string: uploadResult.data.media_id_string,
-        },
-      ]),
-    );
+      console.debug(nowMedia);
+      const filename = nowMedia.name;
+      yield put(actions.updateStatus('uploading'));
+      yield put(actions.changeNotify(true, 'info', `ファイルアップロード中: ${filename}`, false));
+      const uploadResult: GeneratorType<typeof twitterApi.postMediaUpload> = yield call(twitterApi.postMediaUpload, state.reducer.config.api.twitterBase, nowMedia);
+      if (uploadResult.error) throw uploadResult.error;
+
+      yield put(
+        actions.storeMedia([
+          ...orgMedia,
+          {
+            file: nowMedia as PreviewFile,
+            media_id_string: uploadResult.data.media_id_string,
+          },
+        ]),
+      );
+    }
+
     yield put(actions.changeNotify(true, 'info', 'ファイルアップロード完了'));
     yield put(actions.updateStatus('ok'));
   } catch (error) {
