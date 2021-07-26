@@ -42,6 +42,7 @@ export type Tweets = {
         thumb: MediaSize;
       };
       type: 'photo' | 'video';
+      /** mediaのURL。ブラウザで開くときのURLで短縮URL形式。textにも含まれてる。 */
       url: string;
     }[];
   };

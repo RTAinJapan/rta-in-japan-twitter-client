@@ -141,14 +141,28 @@ export const tweetToReplyUrl = (tweet: Tweets): string => {
   }
 };
 
+/**
+ * ツイートのオブジェクトから、本文をいい感じに整形して出力する
+ * @param tweet
+ * @returns
+ */
 export const tweetTextUrlReplace = (tweet: Tweets): string => {
   let text = tweet.full_text;
   try {
+    // 謎の短縮URLを展開表示する
     if (tweet.entities) {
       for (const urlinfo of tweet.entities.urls) {
         const replaceTarget = urlinfo.url;
         const replaceUrl = urlinfo.expanded_url;
         text = text.replace(replaceTarget, replaceUrl);
+      }
+    }
+
+    // なぜかくっついてくる画像・動画の短縮URLを削除する
+    if (tweet.extended_entities && tweet.extended_entities.media) {
+      const mediaList = tweet.extended_entities.media;
+      for (const media of mediaList) {
+        text = text.replace(media.url, '');
       }
     }
   } catch (e) {
