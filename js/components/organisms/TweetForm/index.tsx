@@ -193,6 +193,17 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
     props.uploadMedia(accepted);
   };
 
+  const handleTextOnPaste: React.ClipboardEventHandler<HTMLDivElement> = (e) => {
+    const items = e.clipboardData.items;
+    const blob = items[0].getAsFile();
+    if (!blob) return;
+
+    if (['image/gif', 'image/jpeg', 'image/png', 'image/jpg', 'video/mp4'].includes(blob.type)) {
+      console.log(blob);
+      props.uploadMedia([blob]);
+    }
+  };
+
   return (
     <div className={classes.root}>
       {/* テキストボックス */}
@@ -209,6 +220,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                   rowsMax="8"
                   value={tweet}
                   onChange={handleChange}
+                  onPaste={handleTextOnPaste}
                   className={classes.textField}
                   margin="normal"
                   helperText={`${tweetCount}`}

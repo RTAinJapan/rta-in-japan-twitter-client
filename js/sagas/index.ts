@@ -220,8 +220,11 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
       for (const nowMedia of action.payload) {
         console.log(`file: ${nowMedia.name}`);
         // 同名のファイルは不可
+        // ただしimage.pngはペーストできたやつなので、チェック対象から除外する
         console.log('ファイル名チェック');
-        if (tempMedia.map((item) => item.name).includes(nowMedia.name)) throw new Error('同名のファイルは選択できません。');
+        if ('image.png' !== nowMedia.name) {
+          if (tempMedia.map((item) => item.name).includes(nowMedia.name)) throw new Error('同名のファイルは選択できません。');
+        }
 
         // リストに登録できるのは、動画1 or 画像1～4
         console.log('整合性チェック1');
