@@ -142,7 +142,7 @@ export const tweetToReplyUrl = (tweet: Tweets): string => {
 };
 
 export const tweetTextUrlReplace = (tweet: Tweets): string => {
-  let text = tweet.text;
+  let text = tweet.full_text;
   try {
     if (tweet.entities) {
       for (const urlinfo of tweet.entities.urls) {

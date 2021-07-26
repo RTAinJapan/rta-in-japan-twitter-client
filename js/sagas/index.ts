@@ -158,7 +158,7 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
     const deleteTargetTweet = state.reducer.twitterTimeline.user.filter((tweet) => tweet.id_str === action.payload);
 
     if (state.reducer.config.twitter.isAllowDeleteTweet) {
-      const isContinue: boolean = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].text}`);
+      const isContinue: boolean = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].full_text}`);
       if (!isContinue) return;
       yield put(actions.changeNotify(true, 'info', '削除要求中'));
 
@@ -175,7 +175,7 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
       yield put(actions.changeNotify(true, 'info', '削除完了'));
       yield put(actions.updateStatus('ok'));
     } else {
-      const tweetText = deleteTargetTweet[0].text;
+      const tweetText = deleteTargetTweet[0].full_text;
       const url = `https://twitter.com/${deleteTargetTweet[0].user.screen_name}/status/${deleteTargetTweet[0].id_str}`;
       yield call(alertSaga, `このツイートを削除したい場合、以下を運営に連絡してください`, 'info', `${url}\n\n${tweetText}`);
     }
