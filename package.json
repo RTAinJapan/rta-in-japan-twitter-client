@@ -10,8 +10,7 @@
     "build-storybook": "build-storybook -s static -c .storybook",
     "pretest-visual": "zisui --serverCmd \"npm run storybook\" http://localhost:9009 -o actual_images",
     "test-visual": "reg-suit run",
-    "lint": "tslint ./src/**/*",
-    "tslint-check": "tslint-config-prettier-check ./tslint.json"
+    "lint": "eslint ./js/**/*"
   },
   "dependencies": {
     "@material-ui/core": "^4.3.3",
@@ -54,26 +53,29 @@
     "@types/webpack-bundle-analyzer": "^2.13.3",
     "@types/webpack-dev-server": "^3.1.7",
     "@types/webpack-env": "^1.14.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.0",
+    "@typescript-eslint/parser": "^4.28.0",
     "babel-loader": "^8.0.6",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.0.4",
+    "eslint": "^7.29.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
     "fork-ts-checker-webpack-plugin": "^1.5.0",
     "html-webpack-plugin": "^3.2.0",
-    "prettier": "^1.18.2",
+    "prettier": "^2.3.1",
     "react-docgen-typescript-loader": "^3.3.0",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "reg-suit": "^0.7.23",
     "terser-webpack-plugin": "^1.4.1",
     "ts-loader": "^6.0.4",
     "ts-node": "^8.3.0",
-    "tslint": "^5.19.0",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.0.1",
     "typescript": "^3.6.2",
     "webpack": "^4.39.3",
     "webpack-bundle-analyzer": "^3.6.0",
     "webpack-cli": "^3.3.7",
     "webpack-dev-server": "^3.8.0",
+    "workbox-webpack-plugin": "^6.1.5",
     "zisui": "^1.3.4"
   }
 }

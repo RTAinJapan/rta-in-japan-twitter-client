@@ -1,9 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Tweet from '../Tweet';
-import ClearIcon from '@material-ui/icons/Clear';
-import Fab from '@material-ui/core/Fab';
-import Tooltip from '@material-ui/core/Tooltip';
 import Paper from '@material-ui/core/Paper';
 import { Tweets } from '../../../types/api';
 
@@ -17,7 +14,7 @@ const useStyles = makeStyles({
     minWidth: '40px',
   },
   list: {
-    height: 'calc(100vh - 150px)',
+    height: 'calc(100vh - 180px)',
     overflowY: 'scroll',
   },
   tweet: {
@@ -37,16 +34,14 @@ export type ComponentProps = {
 };
 export type ActionProps = {
   deleteTweet?: any;
+  replyTweet?: any;
+  retweet?: any;
 };
 
 type PropsType = ComponentProps & ActionProps;
 
-const TweetList: React.SFC<PropsType> = props => {
+const TweetList: React.SFC<PropsType> = (props) => {
   const classes = useStyles();
-
-  const handleDeleteButton = (id: string) => () => {
-    props.deleteTweet(id);
-  };
 
   const label = {
     delete: 'ツイート削除',
@@ -59,15 +54,8 @@ const TweetList: React.SFC<PropsType> = props => {
       <div className={classes.list}>
         {props.tweets.map((item, index) => (
           <div className={classes.tweet} key={`${item.id_str}_${index}`}>
-            <Tooltip title={label.delete} style={{ display: props.deleteTweet ? 'block' : 'none' }}>
-              <span>
-                <Fab className={classes.button} color={'secondary'} size={'small'} onClick={handleDeleteButton(item.id_str)} disabled={!props.deleteTweet}>
-                  <ClearIcon />
-                </Fab>
-              </span>
-            </Tooltip>
             <div className={classes.tweetContent}>
-              <Tweet {...item} />
+              <Tweet {...item} deleteTweet={props.deleteTweet} replyTweet={props.replyTweet} retweet={props.retweet} />
             </div>
           </div>
         ))}

@@ -4,6 +4,7 @@ import TerserPlugin from 'terser-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import path from 'path';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import WorkboxWebpackPlugin from 'workbox-webpack-plugin';
 
 interface Configuration extends webpack.Configuration {
   devServer?: webpackDevServer.Configuration;
@@ -103,6 +104,9 @@ const config: Configuration = {
         to: '',
       },
     ]),
+    new WorkboxWebpackPlugin.GenerateSW({
+      maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
+    }),
   ],
 };
 

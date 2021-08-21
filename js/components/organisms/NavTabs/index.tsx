@@ -27,7 +27,7 @@ type ComponentProps = {
   }[];
 };
 
-const NavTabs: React.SFC<ComponentProps & React.Props<{}>> = props => {
+const NavTabs: React.SFC<ComponentProps & React.Props<{}>> = (props) => {
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState(0);
 

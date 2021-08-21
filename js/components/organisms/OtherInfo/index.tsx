@@ -22,7 +22,7 @@ type ActionProps = typeof mapDispatchToProps;
 
 type PropsType = ComponentProps & ActionProps;
 
-export const OtherInfo: React.SFC<PropsType> = props => {
+export const OtherInfo: React.SFC<PropsType> = (props) => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -64,7 +64,4 @@ const mapDispatchToProps = {
   logout: actions.logoutDiscord,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(OtherInfo);
+export default connect(mapStateToProps, mapDispatchToProps)(OtherInfo);

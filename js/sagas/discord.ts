@@ -55,7 +55,7 @@ const getAccessToken = async (config: Config['discord']['config'], code: string)
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: Object.entries(body)
-        .map(obj => obj.join('='))
+        .map((obj) => obj.join('='))
         .join('&'),
     });
     return await result.json();
@@ -112,7 +112,7 @@ export function* loginCheck() {
         return;
       }
 
-      const guild = userGuildList.filter(userGuild => userGuild.id === config.discord.guild);
+      const guild = userGuildList.filter((userGuild) => userGuild.id === config.discord.guild);
       if (guild.length === 0) throw new Error('このユーザは規定のサーバに所属していません。');
       if (!config.discord.users.includes(user.id)) throw new Error('操作権限がありません。');
 

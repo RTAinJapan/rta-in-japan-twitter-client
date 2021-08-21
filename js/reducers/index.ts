@@ -54,6 +54,10 @@ export type GlobalState = {
       media_id_string: string;
       file: PreviewFile;
     }[];
+    /** 返信先のツイートID */
+    in_reply_to_status_id: Tweets | null;
+    /** 引用RTで引用するURL */
+    attachment_url: Tweets | null;
   };
   /** ゲーム情報 */
   game: Game[];
@@ -93,6 +97,8 @@ const initial: GlobalState = {
   post: {
     text: '',
     media: [],
+    in_reply_to_status_id: null,
+    attachment_url: null,
   },
   game: [],
   config: {
@@ -162,6 +168,42 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
         post: {
           ...state.post,
           text: action.payload,
+        },
+      };
+    }
+    case getType(actions.addReplyTweet): {
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          in_reply_to_status_id: action.payload,
+        },
+      };
+    }
+    case getType(actions.deleteReplyTweet): {
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          in_reply_to_status_id: null,
+        },
+      };
+    }
+    case getType(actions.addAttachUrl): {
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          attachment_url: action.payload,
+        },
+      };
+    }
+    case getType(actions.deleteAttachUrl): {
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          attachment_url: null,
         },
       };
     }

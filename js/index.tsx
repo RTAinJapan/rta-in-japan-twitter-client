@@ -6,6 +6,8 @@ import App from './components/pages/App';
 import configureStore from './store';
 import { MuiThemeProvider } from '@material-ui/core';
 import { theme } from './theme';
+import * as serviceWorker from './serviceWorker';
+import { SWUpdateDialog } from './components/organisms/SWUpdateDialog';
 
 ReactDOM.render(
   <MuiThemeProvider theme={theme}>
@@ -19,3 +21,14 @@ ReactDOM.render(
 if ((module as any).hot) {
   (module as any).hot.accept();
 }
+
+serviceWorker.register({
+  onSuccess: (registration) => {
+    console.log(`'ServiceWorker registration successful with scope: ${registration.scope}`);
+  },
+  onUpdate: (registration) => {
+    if (registration.waiting) {
+      ReactDOM.render(<SWUpdateDialog registration={registration} />, document.querySelector('.SW-update-dialog'));
+    }
+  },
+});

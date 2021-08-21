@@ -4,9 +4,12 @@ import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import * as actions from '../../../actions';
 import Modal from '../../molecules/Modal';
 import { RootState } from '../../../reducers';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Divider } from '@material-ui/core';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Divider, IconButton, Tooltip } from '@material-ui/core';
+import AttachFileIcon from '@material-ui/icons/AttachFile';
+import DeleteIcon from '@material-ui/icons/Cancel';
 import Dropzone from 'react-dropzone';
 import { countStr } from '../../../sagas/twitterUtil';
+import Tweet from '../../molecules/Tweet';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -93,7 +96,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
 
   // テンプレート文の生成
   React.useEffect(() => {
-    const newTemplateList = [];
+    const newTemplateList: string[] = [];
     const selectedGame = props.gameList[templateGameIndex];
     /** ゲーム名 */
     const gamename = selectedGame ? selectedGame.gamename : '';
@@ -102,7 +105,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
     /** 走者 */
     const runners = selectedGame ? selectedGame.runner : [];
     const runnerText = runners
-      .map(runner => {
+      .map((runner) => {
         let text = `${runner.username}さん`;
         if (runner.twitterid) text += `(@${runner.twitterid})`;
         return text;
@@ -114,13 +117,14 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
     /** 解説 */
     const commentaries = selectedGame ? selectedGame.commentary : [];
     const commentariesText = commentaries
-      .map(commentary => {
+      .map((commentary) => {
         let text = `${commentary.username}さん`;
         if (commentary.twitterid) text += `(@${commentary.twitterid})`;
         return text;
       })
-      .reduce((prev, next) => {
-        return prev + next;
+      .reduce((prev, next, index) => {
+        if (index === 0) return prev + next;
+        return prev + '、' + next;
       }, '');
 
     //
@@ -189,6 +193,17 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
     props.uploadMedia(accepted);
   };
 
+  const handleTextOnPaste: React.ClipboardEventHandler<HTMLDivElement> = (e) => {
+    const items = e.clipboardData.items;
+    const blob = items[0].getAsFile();
+    if (!blob) return;
+
+    if (['image/gif', 'image/jpeg', 'image/png', 'image/jpg', 'video/mp4'].includes(blob.type)) {
+      console.log(blob);
+      props.uploadMedia([blob]);
+    }
+  };
+
   return (
     <div className={classes.root}>
       {/* テキストボックス */}
@@ -201,10 +216,11 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                 <TextField
                   label="ツイート内容"
                   multiline={true}
-                  rows={'3'}
-                  rowsMax="6"
+                  rows="4"
+                  rowsMax="8"
                   value={tweet}
                   onChange={handleChange}
+                  onPaste={handleTextOnPaste}
                   className={classes.textField}
                   margin="normal"
                   helperText={`${tweetCount}`}
@@ -216,6 +232,38 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
           )}
         </Dropzone>
       </div>
+      {/* 返信 */}
+      {props.replyTweet ? (
+        <div style={{ backgroundColor: 'lightgray', padding: 10 }}>
+          <div>返信</div>
+          <div style={{ display: 'flex' }}>
+            <Tooltip title="返信を解除">
+              <IconButton onClick={() => props.deleteReplyTweet()}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            <Tweet id_str={props.replyTweet.id_str} full_text={props.replyTweet.full_text} created_at={props.replyTweet.created_at} user={props.replyTweet.user} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
+      {/* 引用RT */}
+      {props.retweet ? (
+        <div style={{ backgroundColor: 'lightgray', padding: 10 }}>
+          <div>引用RT</div>
+          <div style={{ display: 'flex' }}>
+            <Tooltip title="引用RTを解除">
+              <IconButton onClick={() => props.deleteRetweet()}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            <Tweet id_str={props.retweet.id_str} full_text={props.retweet.full_text} created_at={props.retweet.created_at} user={props.retweet.user} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       {/* アップロード */}
       <div>
         <Dropzone accept="image/gif,image/jpeg,image/png,image/jpg,video/mp4" onDrop={handleDrop}>
@@ -223,9 +271,11 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
             <section>
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
-                <Button size={'small'} variant={'contained'}>
-                  ファイル添付
-                </Button>
+                <Tooltip title="ファイル添付">
+                  <IconButton>
+                    <AttachFileIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
               </div>
             </section>
           )}
@@ -291,12 +341,13 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
               </Select>
             </FormControl>
           </div>
-          {/* テキスト */}
-          <div style={{ padding: 5, height: 'calc(80vh - 55px)', overflowY: 'scroll' }}>
+
+          {/* テンプレートテキスト */}
+          <div style={{ padding: 5, height: 'calc(80vh - 85px)', overflowY: 'scroll' }}>
             {templateList.map((template, index) => (
               <div key={index.toString()} style={{ marginBottom: 20 }}>
                 <TextField
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', backgroundColor: '#ddd' }}
                   variant="outlined"
                   multiline={true}
                   InputProps={{
@@ -305,7 +356,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                   value={template}
                 />
                 <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                  <Button variant={'contained'} size={'small'} color={'primary'} onClick={handleTemplateApply(template)}>
+                  <Button variant={'contained'} size={'small'} color={'primary'} onClick={handleTemplateApply(template)} disabled={Number.isNaN(templateGameIndex)}>
                     反映
                   </Button>
                 </div>
@@ -324,7 +375,6 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
             ) : (
               <img className={classes.media} src={props.mediaList[previewMediaIndex].file.preview} />
             ))}
-          }
         </div>
       </Modal>
     </div>
@@ -335,6 +385,8 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
 const mapStateToProps = (state: RootState) => {
   return {
     tweetText: state.reducer.post.text,
+    replyTweet: state.reducer.post.in_reply_to_status_id,
+    retweet: state.reducer.post.attachment_url,
     mediaList: state.reducer.post.media,
     gameList: state.reducer.game,
     template: state.reducer.config.tweetTemplate,
@@ -349,9 +401,8 @@ const mapDispatchToProps = {
   submitTweet: actions.submitTweet,
   uploadMedia: actions.uploadMedia,
   deleteMedia: actions.deleteMedia,
+  deleteReplyTweet: actions.deleteReplyTweet,
+  deleteRetweet: actions.deleteAttachUrl,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(TweetForm);
+export default connect(mapStateToProps, mapDispatchToProps)(TweetForm);
