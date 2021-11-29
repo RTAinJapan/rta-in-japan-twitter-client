@@ -106,6 +106,7 @@ const config: Configuration = {
     ]),
     new WorkboxWebpackPlugin.GenerateSW({
       maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
+      exclude: ['config.json'], // キャッシュ対象から除外
     }),
   ],
 };

@@ -106,6 +106,9 @@ const initial: GlobalState = {
       twitterBase: '',
       runner: '',
     },
+    twitter: {
+      isAllowDeleteTweet: false,
+    },
     discord: {
       config: {
         baseUrl: '',
