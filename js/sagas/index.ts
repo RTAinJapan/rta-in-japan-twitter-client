@@ -41,7 +41,8 @@ function* errorHandler(error: any) {
 
 function* fetchConfig() {
   try {
-    const config: Config = yield call(fetchJson, './config.json');
+    const time = new Date().getTime();
+    const config: Config = yield call(fetchJson, `./config.json?t=${time}`);
     yield put(actions.storeConfig(config));
   } catch (error) {
     yield call(errorHandler, error);

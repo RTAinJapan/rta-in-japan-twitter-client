@@ -242,7 +242,14 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
-            <Tweet id_str={props.replyTweet.id_str} full_text={props.replyTweet.full_text} created_at={props.replyTweet.created_at} user={props.replyTweet.user} />
+            <Tweet
+              id_str={props.replyTweet.id_str}
+              full_text={props.replyTweet.full_text}
+              created_at={props.replyTweet.created_at}
+              display_text_range={props.replyTweet.display_text_range}
+              entities={props.replyTweet.entities}
+              user={props.replyTweet.user}
+            />
           </div>
         </div>
       ) : (
@@ -258,7 +265,14 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
-            <Tweet id_str={props.retweet.id_str} full_text={props.retweet.full_text} created_at={props.retweet.created_at} user={props.retweet.user} />
+            <Tweet
+              id_str={props.retweet.id_str}
+              full_text={props.retweet.full_text}
+              created_at={props.retweet.created_at}
+              display_text_range={props.retweet.display_text_range}
+              entities={props.retweet.entities}
+              user={props.retweet.user}
+            />
           </div>
         </div>
       ) : (

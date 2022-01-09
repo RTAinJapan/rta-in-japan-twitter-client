@@ -149,6 +149,10 @@ export const tweetToReplyUrl = (tweet: Tweets): string => {
 export const tweetTextUrlReplace = (tweet: Tweets): string => {
   let text = tweet.full_text;
   try {
+    if (tweet.display_text_range && tweet.display_text_range.length == 2) {
+      text = text.slice(tweet.display_text_range[0], tweet.display_text_range[1]);
+    }
+
     // 謎の短縮URLを展開表示する
     if (tweet.entities) {
       for (const urlinfo of tweet.entities.urls) {

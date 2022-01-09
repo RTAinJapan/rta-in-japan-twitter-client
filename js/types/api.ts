@@ -13,6 +13,7 @@ export type Tweets = {
   full_text: string;
   /** 投稿日時 */
   created_at: string;
+  display_text_range: [number, number];
   entities?: {
     hashtags: object[];
     symbols: object[];
