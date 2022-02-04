@@ -1,7 +1,7 @@
 import { createAction } from 'typesafe-actions';
 import { PreviewFile, Config } from '../types/global';
 import { DialogState, RootState } from '../reducers';
-import { Tweets, Game } from '../types/api';
+import { Tweets, Game, Media } from '../types/api';
 
 const OPEN_NOTIFY = 'OPEN_NOTIFY';
 const CLOSE_NOTIFY = 'CLOSE_NOTIFY';
@@ -140,4 +140,26 @@ const UPDATE_GAME_LIST = 'UPDATE_GAME_LIST';
 /** ゲーム情報更新 */
 export const updateGameList = createAction(UPDATE_GAME_LIST, (action) => {
   return (game: Game[]) => action(game);
+});
+
+// テーマ設定
+const UPDATE_THEME = 'UPDATE_THEME';
+export const updateTheme = createAction(UPDATE_THEME, (action) => {
+  return (mode: 'light' | 'dark') => action(mode);
+});
+
+// メディア
+const SHOW_MEDIA = 'SHOW_MEDIA';
+export const showMedia = createAction(SHOW_MEDIA, (action) => {
+  return (obj: { media: Media[]; index: number }) => action(obj);
+});
+
+const CLOSE_MEDIA = 'CLOSE_MEDIA';
+export const closeMedia = createAction(CLOSE_MEDIA, (action) => {
+  return () => action();
+});
+
+const CHANGE_MEDIA_INDEX = 'CHANGE_MEDIA_INDEX';
+export const changeMediaIndex = createAction(CHANGE_MEDIA_INDEX, (action) => {
+  return (index: number) => action(index);
 });

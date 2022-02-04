@@ -1,25 +1,27 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import * as actions from '../../../actions';
 import Modal from '../../molecules/Modal';
-import { RootState, DialogState } from '../../../reducers';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import { RootState } from '../../../reducers';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import classNames from 'classnames';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import { Theme, ThemeProvider } from '@mui/material';
+import { compColor } from '../../../sagas/common';
 
-const useStyles = makeStyles(() =>
-  createStyles({
+const useStyles = (theme: Theme) =>
+  makeStyles({
     root: {
       width: '80vw',
       padding: 10,
       borderRadius: 5,
+      maxWidth: 600,
     },
     contents: {},
     info: {
-      backgroundColor: 'white',
-      color: 'black',
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.primary,
     },
     warning: {
       backgroundColor: 'orange',
@@ -36,25 +38,26 @@ const useStyles = makeStyles(() =>
     button: {
       margin: 5,
     },
-  }),
-);
+  })();
 
 const theme: Partial<Theme> = {
-  overrides: {
+  components: {
     MuiFilledInput: {
-      multiline: {
-        padding: 10,
+      styleOverrides: {
+        multiline: {
+          padding: 10,
+        },
       },
     },
   },
 };
 
-type ComponentProps = DialogState;
+type ComponentProps = ReturnType<typeof mapStateToProps>;
 type ActionProps = typeof mapDispatchToProps;
 
 type PropsType = ComponentProps & ActionProps;
 const App: React.SFC<PropsType> = (props: PropsType) => {
-  const classes = useStyles({});
+  const classes = useStyles(props.theme);
 
   const label = {
     ok: 'OK',
@@ -74,7 +77,12 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
     if (isConfirm) {
       return (
         <>
-          <Button className={classes.button} variant={'contained'} color={'default'} onClick={props.clickNo}>
+          <Button
+            className={classes.button}
+            variant={'contained'}
+            onClick={props.clickNo}
+            style={{ backgroundColor: compColor(props.theme.palette.background.paper), color: compColor(props.theme.palette.text.primary) }}
+          >
             {label.no}
           </Button>
           <Button className={classes.button} variant={'contained'} color={'primary'} onClick={props.clickYes}>
@@ -94,9 +102,9 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
   const detailArea = (detail: string) => {
     if (detail) {
       return (
-        <MuiThemeProvider theme={theme}>
-          <TextField rowsMax={10} rows={5} variant={'filled'} multiline={true} defaultValue={detail} InputProps={{ readOnly: true }} fullWidth={true} />
-        </MuiThemeProvider>
+        <ThemeProvider theme={theme}>
+          <TextField maxRows={10} rows={5} variant={'filled'} multiline={true} defaultValue={detail} InputProps={{ readOnly: true }} fullWidth={true} />
+        </ThemeProvider>
       );
     } else {
       return '';
@@ -119,9 +127,10 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
 };
 
 // state
-const mapStateToProps = (state: RootState): ComponentProps => {
+const mapStateToProps = (state: RootState) => {
   return {
     ...state.reducer.dialog,
+    theme: state.reducer.theme.theme,
   };
 };
 

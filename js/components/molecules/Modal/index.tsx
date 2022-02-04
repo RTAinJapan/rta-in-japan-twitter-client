@@ -1,18 +1,16 @@
-import React, { ReactChildren } from 'react';
-import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import MuiModal from '@material-ui/core/Modal';
+import React from 'react';
+import MuiModal from '@mui/material/Modal';
+import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    paper: {
-      position: 'absolute',
-      backgroundColor: 'initial',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-  }),
-);
+const useStyles = makeStyles({
+  paper: {
+    position: 'absolute',
+    backgroundColor: 'initial',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 const modalStyle = {
   top: `50%`,
@@ -31,7 +29,7 @@ type ActionProps = {
 type PropsType = ComponentProps & ActionProps;
 
 const Modal: React.SFC<PropsType> = (props) => {
-  const classes = useStyles({});
+  const classes = useStyles();
   const handleClose = () => {
     if (props.modalClose) props.modalClose();
   };

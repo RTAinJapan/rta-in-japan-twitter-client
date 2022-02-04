@@ -1,4 +1,6 @@
 import fetchJsonpLib from 'fetch-jsonp';
+import complementaryColors from 'complementary-colors';
+import { Color } from './Color';
 
 /**
  * JSONの取得
@@ -70,4 +72,15 @@ export const postFile = async <T>(url: string, file: File): Promise<T> => {
     console.error(e);
     throw new Error(`通信エラーが発生しました。 ${e.message}`);
   }
+};
+
+/**
+ * 色の補色を返す
+ * @param color #123456
+ * @returns
+ */
+export const compColor = (baseColor: string) => {
+  const color = Color.parse(baseColor);
+  color.spin(180);
+  return color.cssRGB();
 };

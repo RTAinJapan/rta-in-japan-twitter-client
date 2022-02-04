@@ -1,7 +1,7 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import Tweet from '../Tweet';
-import Paper from '@material-ui/core/Paper';
+import Paper from '@mui/material/Paper';
 import { Tweets } from '../../../types/api';
 
 const useStyles = makeStyles({
