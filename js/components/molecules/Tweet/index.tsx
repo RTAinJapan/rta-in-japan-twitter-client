@@ -1,37 +1,37 @@
 import React from 'react';
-import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
-import Paper from '@material-ui/core/Paper';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
-import RepeatIcon from '@material-ui/icons/Repeat';
-import ReplyIcon from '@material-ui/icons/Reply';
-import LinkIcon from '@material-ui/icons/Link';
+import Avatar from '@mui/material/Avatar';
+import Paper from '@mui/material/Paper';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import RepeatIcon from '@mui/icons-material/Repeat';
+import ReplyIcon from '@mui/icons-material/Reply';
+import LinkIcon from '@mui/icons-material/Link';
 import { Tweets } from '../../../types/api';
 import moment from 'moment';
 import * as actions from '../../../actions';
 import { tweetTextUrlReplace, tweetToReplyUrl, tweetToUrl } from '../../../sagas/twitterUtil';
-import { Divider } from '@material-ui/core';
+import { Divider } from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { connect } from 'react-redux';
+import { RootState } from '../../../reducers';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      padding: 5,
-      display: 'flex',
-    },
-    screenName: {
-      marginLeft: 5,
-      color: 'gray',
-    },
-    date: {
-      marginLeft: 5,
-      color: 'gray',
-      fontSize: '10px',
-    },
-  }),
-);
+const useStyles = makeStyles({
+  root: {
+    padding: 5,
+    display: 'flex',
+  },
+  screenName: {
+    marginLeft: 5,
+    color: 'gray',
+  },
+  date: {
+    marginLeft: 5,
+    color: 'gray',
+    fontSize: '10px',
+  },
+});
 
 export type ComponentProps = Tweets;
 
@@ -39,11 +39,12 @@ type ActionProps = {
   replyTweet?: typeof actions.addReplyTweet;
   retweet?: typeof actions.addAttachUrl;
   deleteTweet?: typeof actions.deleteTweet;
+  showMedia: typeof actions.showMedia;
 };
 
 type PropsType = ComponentProps & ActionProps;
 const Tweet: React.SFC<PropsType> = (props: PropsType) => {
-  const classes = useStyles({});
+  const classes = useStyles();
 
   const handleReplyButton = (id: string) => () => {
     if (props.replyTweet) {
@@ -59,32 +60,44 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
     if (props.deleteTweet) props.deleteTweet(id);
   };
 
+  /** ツイートを外部で開く */
   const handleLinkButton = (tweet: Tweets) => () => {
     const url = tweetToUrl(tweet);
     window.open(url);
   };
 
+  /** 返信ツイートを外部で開く */
   const handleReplyLinkButton = (tweet: Tweets) => () => {
     const url = tweetToReplyUrl(tweet);
     window.open(url);
   };
 
+  const handleShowMedia = (index: number) => () => {
+    const media = props.extended_entities ? props.extended_entities.media : null;
+    if (!media) return;
+    props.showMedia({
+      media: media,
+      index,
+    });
+  };
+
   const createThumb = (tweet: Tweets['extended_entities']) => {
-    // 全部画像ならサムネ表示
+    // サムネ表示
     const media = tweet ? tweet.media : null;
 
     if (media) {
       return (
         <div>
-          {media.map((med) => (
-            <a href={med.media_url_https} target="_blank">
-              <img style={{ height: 80, objectFit: 'fill' }} src={`${med.media_url_https}:small`} />
-            </a>
+          {media.map((med, index) => (
+            // なんかkeyがユニークにならない
+            <div key={`${med.media_url_http}_${Math.random()}`} onClick={handleShowMedia(index)}>
+              <img style={{ height: 80, objectFit: 'fill', maxWidth: '100%' }} src={`${med.media_url_https}:small`} />
+            </div>
           ))}
         </div>
       );
     } else {
-      return <div></div>;
+      return <div />;
     }
   };
 
@@ -104,7 +117,7 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
           </span>
           <span className={classes.date}>
             <Typography style={{ fontSize: 'xx-small' }} variant={'caption'}>
-              {moment(props.created_at).format('YYYY/MM/DD HH:mm:ss')}
+              {moment(new Date(props.created_at)).format('YYYY/MM/DD HH:mm:ss')}
             </Typography>
           </span>
         </div>
@@ -189,4 +202,14 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
   );
 };
 
-export default Tweet;
+const mapStateToProps = (state: RootState) => {
+  return {
+    // preview: state.reducer.mediaPreview,
+  };
+};
+
+const mapDispatchToProps = {
+  showMedia: actions.showMedia,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tweet);

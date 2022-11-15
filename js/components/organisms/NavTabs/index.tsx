@@ -1,8 +1,8 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@mui/styles';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Paper from '@mui/material/Paper';
 
 const useStyles = makeStyles({
   root: {
@@ -46,7 +46,7 @@ const NavTabs: React.SFC<ComponentProps & React.Props<{}>> = (props) => {
       <div>
         {children.map((child: React.ReactNode, index: number) => {
           if (index === tabIndex) {
-            return <div key={index}>{child}</div>;
+            return <div key={`${index}`}>{child}</div>;
           } else {
             return (
               <div key={index} style={{ display: 'none' }}>

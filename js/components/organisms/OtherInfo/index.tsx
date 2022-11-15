@@ -1,11 +1,11 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from '@mui/styles';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
 import { RootState } from '../../../reducers';
 import * as actions from '../../../actions';
 import { connect } from 'react-redux';

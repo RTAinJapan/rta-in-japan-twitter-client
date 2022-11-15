@@ -1,32 +1,33 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
+import { Theme, createStyles } from '@mui/material/styles';
 import * as actions from '../../../actions';
 import { RootState } from '../../../reducers';
 import TweetList from '../../molecules/TweetList';
-import RefreshIcon from '@material-ui/icons/Refresh';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import NavTabs from '../NavTabs';
-import Fab from '@material-ui/core/Fab';
+import Fab from '@mui/material/Fab';
+import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const useStyles = (theme: Theme) =>
+  makeStyles({
     root: {
       marginBottom: 40,
+      position: 'relative',
     },
     reloadButton: {
-      position: 'fixed',
+      position: 'absolute',
       bottom: theme.spacing(5),
       right: theme.spacing(2),
     },
-  }),
-);
+  })();
 
 type ComponentProps = ReturnType<typeof mapStateToProps>;
 type ActionProps = typeof mapDispatchToProps;
 
 type PropsType = ComponentProps & ActionProps;
 const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
-  const classes = useStyles({});
+  const classes = useStyles(props.theme.theme);
 
   const tabs = [
     {
@@ -53,7 +54,7 @@ const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
           <TweetList tweets={props.list.hash} />
         </div>
       </NavTabs>
-      <Fab className={classes.reloadButton} color={'primary'} onClick={() => props.reloadTweet()}>
+      <Fab className={classes.reloadButton} style={{ position: 'absolute' }} color={'primary'} onClick={() => props.reloadTweet()}>
         <RefreshIcon />
       </Fab>
     </div>
@@ -64,6 +65,7 @@ const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
 const mapStateToProps = (state: RootState) => {
   return {
     list: state.reducer.twitterTimeline,
+    theme: state.reducer.theme,
   };
 };
 

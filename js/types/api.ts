@@ -27,25 +27,7 @@ export type Tweets = {
   };
   /** 添付画像とか */
   extended_entities?: {
-    media: {
-      display_url: string;
-      expanded_url: string;
-      id_str: string;
-      indices: [number, number];
-      /** 画像のURL。動画のときも画像 */
-      media_url_http: string;
-      /** 画像のURL。動画のときも画像 */
-      media_url_https: string;
-      sizes: {
-        large: MediaSize;
-        medium: MediaSize;
-        small: MediaSize;
-        thumb: MediaSize;
-      };
-      type: 'photo' | 'video';
-      /** mediaのURL。ブラウザで開くときのURLで短縮URL形式。textにも含まれてる。 */
-      url: string;
-    }[];
+    media: Media[];
   };
   /** 返信先のscreen_name */
   in_reply_to_screen_name?: string;
@@ -63,6 +45,41 @@ export type Tweets = {
     name: string;
     screen_name: string;
     profile_image_url_https: string;
+  };
+};
+
+export type Media = {
+  display_url: string;
+  expanded_url: string;
+  id_str: string;
+  indices: [number, number];
+  /** 画像のURL。動画のときも画像 */
+  media_url_http: string;
+  /** 画像のURL。動画のときも画像 */
+  media_url_https: string;
+  sizes: {
+    large: MediaSize;
+    medium: MediaSize;
+    small: MediaSize;
+    thumb: MediaSize;
+  };
+  type: 'photo' | 'video';
+  /** mediaのURL。ブラウザで開くときのURLで短縮URL形式。textにも含まれてる。 */
+  url: string;
+  /** 動画情報。type:videoの時だけkeyがある */
+  video_info?: {
+    /** 16, 9みたいなの */
+    aspect_ratio: [number, number];
+    /** 動画の長さ(ミリ秒) */
+    duration_millis: number;
+    variants: {
+      /** ビットレート */
+      bitrate: number;
+      /** @example "video/mp4" */
+      content_type: string;
+      /** mp4とかのURL */
+      url: string;
+    }[];
   };
 };
 

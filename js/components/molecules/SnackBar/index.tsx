@@ -1,16 +1,20 @@
 import React from 'react';
 import classNames from 'classnames';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import ErrorIcon from '@material-ui/icons/Error';
-import InfoIcon from '@material-ui/icons/Info';
-import CloseIcon from '@material-ui/icons/Close';
-import green from '@material-ui/core/colors/green';
-import amber from '@material-ui/core/colors/amber';
-import IconButton from '@material-ui/core/IconButton';
-import Snackbar from '@material-ui/core/Snackbar';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import WarningIcon from '@material-ui/icons/Warning';
-import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
+import InfoIcon from '@mui/icons-material/Info';
+import CloseIcon from '@mui/icons-material/Close';
+import green from '@mui/material/colors/green';
+import amber from '@mui/material/colors/amber';
+import IconButton from '@mui/material/IconButton';
+import Snackbar from '@mui/material/Snackbar';
+import SnackbarContent from '@mui/material/SnackbarContent';
+import WarningIcon from '@mui/icons-material/Warning';
+import { Theme } from '@mui/material/styles';
+import { makeStyles } from '@mui/styles';
+import { connect } from 'react-redux';
+import { RootState } from '../../../reducers';
+import { blue, red } from '@mui/material/colors';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -19,25 +23,13 @@ const variantIcon = {
   info: InfoIcon,
 };
 
-const innerStyle = makeStyles((theme: Theme) =>
-  createStyles({
+const innerStyle = (theme: Theme) =>
+  makeStyles({
     snackbarMessage: {
-      width: 'calc(100% - 40px)',
+      width: 'calc(100% - 60px)',
     },
     snackbarAction: {
       paddingLeft: 3,
-    },
-    success: {
-      backgroundColor: green[600],
-    },
-    error: {
-      backgroundColor: theme.palette.error.dark,
-    },
-    info: {
-      backgroundColor: theme.palette.primary.dark,
-    },
-    warning: {
-      backgroundColor: amber[700],
     },
     icon: {
       fontSize: 20,
@@ -51,8 +43,22 @@ const innerStyle = makeStyles((theme: Theme) =>
       alignItems: 'center',
     },
     close: {},
-  }),
-);
+  })();
+
+const snackbarBackground = {
+  success: {
+    backgroundColor: green[600],
+  },
+  error: {
+    backgroundColor: red[600],
+  },
+  info: {
+    backgroundColor: blue[600],
+  },
+  warning: {
+    backgroundColor: amber[700],
+  },
+};
 
 export type CustomeProps = {
   open: boolean;
@@ -62,8 +68,9 @@ export type CustomeProps = {
   onClose: (event: React.SyntheticEvent<any>, reason: string) => void;
 };
 
-const CustomizedSnackbars: React.SFC<CustomeProps> = (props: CustomeProps) => {
-  const classes = innerStyle({});
+type PropsType = ReturnType<typeof mapStateToProps>;
+const CustomizedSnackbars: React.SFC<CustomeProps> = (props: CustomeProps & PropsType) => {
+  const classes = innerStyle(props.theme);
   const Icon = variantIcon[props.variant];
 
   return (
@@ -77,8 +84,8 @@ const CustomizedSnackbars: React.SFC<CustomeProps> = (props: CustomeProps) => {
       onClose={props.closable ? props.onClose : undefined}
     >
       <SnackbarContent
-        className={classNames(classes[props.variant])}
-        aria-describedby="client-snackbar"
+        style={{ background: snackbarBackground[props.variant].backgroundColor, color: 'white' }}
+        className={classes[props.variant]}
         message={
           <span className={classes.message}>
             <Icon className={classNames(classes.icon, classes.iconVariant)} />
@@ -89,6 +96,7 @@ const CustomizedSnackbars: React.SFC<CustomeProps> = (props: CustomeProps) => {
           message: classes.snackbarMessage,
           action: classes.snackbarAction,
         }}
+        // 閉じていい時は閉じるボタンを表示
         action={
           props.closable
             ? [
@@ -103,4 +111,14 @@ const CustomizedSnackbars: React.SFC<CustomeProps> = (props: CustomeProps) => {
   );
 };
 
-export default CustomizedSnackbars;
+// state
+const mapStateToProps = (state: RootState) => {
+  return {
+    theme: state.reducer.theme.theme,
+  };
+};
+
+// action
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CustomizedSnackbars);

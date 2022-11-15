@@ -1,18 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import * as actions from '../../../actions';
 import Modal from '../../molecules/Modal';
 import { RootState } from '../../../reducers';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Divider, IconButton, Tooltip } from '@material-ui/core';
-import AttachFileIcon from '@material-ui/icons/AttachFile';
-import DeleteIcon from '@material-ui/icons/Cancel';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Divider, IconButton, Tooltip, SelectChangeEvent, Paper, Theme, Typography } from '@mui/material';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import DeleteIcon from '@mui/icons-material/Cancel';
 import Dropzone from 'react-dropzone';
 import { countStr } from '../../../sagas/twitterUtil';
 import Tweet from '../../molecules/Tweet';
+import { makeStyles } from '@mui/styles';
+import { compColor } from '../../../sagas/common';
+import { Game } from '../../../types/api';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const useStyles = (theme: Theme) =>
+  makeStyles({
     root: {
       width: '100%',
     },
@@ -45,6 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
     control: {
       marginTop: 10,
       float: 'right',
+      display: 'flex',
     },
     divider: {
       marginTop: 10,
@@ -53,15 +56,19 @@ const useStyles = makeStyles((theme: Theme) =>
     controlButton: {
       margin: 5,
     },
-  }),
-);
+    additional: {
+      padding: 5,
+      backgroundColor: theme.palette.background.paper,
+      boxShadow: '0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 5px rgb(0 0 0 / 12%) !important',
+    },
+  })();
 
 type ComponentProps = ReturnType<typeof mapStateToProps>;
 type ActionProps = typeof mapDispatchToProps;
 
 type PropsType = ComponentProps & ActionProps;
 const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
-  const classes = useStyles({});
+  const classes = useStyles(props.theme.theme);
 
   // ツイート内容
   const [tweet, setTweet] = React.useState<string>('');
@@ -76,10 +83,10 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
   const toggleTemplate = () => setShowTemplate(!showTemplate);
 
   // テンプレートのゲームで選択しているもの
-  const [templateGameIndex, setTemplateGameIndex] = React.useState<number>(NaN);
+  const [templateGameIndex, setTemplateGameIndex] = React.useState<string>('');
 
   // テンプレートのテキスト
-  const [templateList, setTemplate] = React.useState<string[]>([]);
+  const [templateList, setTemplate] = React.useState<{ title: string; contents: string }[]>([]);
 
   // プレビュー
   const [showPreview, setShowPreview] = React.useState<boolean>(false);
@@ -96,8 +103,8 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
 
   // テンプレート文の生成
   React.useEffect(() => {
-    const newTemplateList: string[] = [];
-    const selectedGame = props.gameList[templateGameIndex];
+    const newTemplateList: { title: string; contents: string }[] = [];
+    const selectedGame: Game = props.gameList[templateGameIndex];
     /** ゲーム名 */
     const gamename = selectedGame ? selectedGame.gamename : '';
     /** カテゴリ */
@@ -127,40 +134,33 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
         return prev + '、' + next;
       }, '');
 
-    //
-    if (commentariesText) {
-      for (const template of props.template.withCommentary) {
-        let newTemplate = template.replace('{game}', gamename);
-        newTemplate = newTemplate.replace('{runners}', runnerText);
-        newTemplate = newTemplate.replace('{category}', category);
-        newTemplate = newTemplate.replace('{commentaries}', commentariesText);
-        newTemplate += '\n\n';
-        newTemplate += props.template.footer;
+    for (const template of props.template) {
+      if (commentariesText && template.type === 'withOutCommentary') continue;
+      if (!commentariesText && template.type === 'withCommentary') continue;
 
-        newTemplateList.push(newTemplate);
-      }
-    } else {
-      for (const template of props.template.withOutCommentary) {
-        let newTemplate = template.replace('{game}', gamename);
-        newTemplate = newTemplate.replace('{runners}', runnerText);
-        newTemplate = newTemplate.replace('{category}', category);
-        newTemplate = newTemplate.replace('{commentaries}', commentariesText);
-        newTemplate += '\n\n';
-        newTemplate += props.template.footer;
-
-        newTemplateList.push(newTemplate);
-      }
-    }
-
-    for (const template of props.template.common) {
-      let newTemplate = template.replace('{game}', gamename);
+      let newTemplate = template.text.replace('{game}', gamename);
       newTemplate = newTemplate.replace('{runners}', runnerText);
       newTemplate = newTemplate.replace('{category}', category);
       newTemplate = newTemplate.replace('{commentaries}', commentariesText);
-      newTemplate += '\n\n';
-      newTemplate += props.template.footer;
 
-      newTemplateList.push(newTemplate);
+      // additional
+      if (template.additional) {
+        const additional = template.additional;
+        let str = '';
+        if (additional.includes('{run}')) {
+          for (const run of runners) {
+            const name = run.twitterid ? `${run.username} (@${run.twitterid})` : run.username;
+            str += `\n${additional.replace('{run}', name)}`;
+          }
+        }
+        newTemplate += str;
+      }
+
+      // footer
+      newTemplate += '\n\n';
+      newTemplate += props.tweetFooter;
+
+      newTemplateList.push({ title: template.title, contents: newTemplate });
     }
 
     setTemplate(newTemplateList);
@@ -178,8 +178,9 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
   };
 
   /** テンプレートのゲーム選択 */
-  const handleChangeGame = (event: React.ChangeEvent<{ name?: string; value: number }>, child: React.ReactNode): void => {
-    setTemplateGameIndex(event.target.value);
+  const handleChangeGame = (event: SelectChangeEvent<{ name?: string; value: number }>, child: React.ReactNode): void => {
+    const value = event.target.value as string;
+    setTemplateGameIndex(value);
   };
 
   /** テンプレート文の適用 */
@@ -208,7 +209,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
     <div className={classes.root}>
       {/* テキストボックス */}
       <div>
-        <Dropzone accept="image/gif,image/jpeg,image/png,image/jpg,video/mp4" onDrop={handleDrop} noClick={true}>
+        <Dropzone accept="image/gif,image/jpeg,image/png,image/jpg,video/mp4" onDrop={handleDrop as any} noClick={true}>
           {({ getRootProps, getInputProps }) => (
             <section>
               <div {...getRootProps()}>
@@ -216,8 +217,8 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                 <TextField
                   label="ツイート内容"
                   multiline={true}
-                  rows="4"
-                  rowsMax="8"
+                  minRows={4}
+                  maxRows={8}
                   value={tweet}
                   onChange={handleChange}
                   onPaste={handleTextOnPaste}
@@ -234,7 +235,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
       </div>
       {/* 返信 */}
       {props.replyTweet ? (
-        <div style={{ backgroundColor: 'lightgray', padding: 10 }}>
+        <Paper className={classes.additional}>
           <div>返信</div>
           <div style={{ display: 'flex' }}>
             <Tooltip title="返信を解除">
@@ -251,13 +252,13 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
               user={props.replyTweet.user}
             />
           </div>
-        </div>
+        </Paper>
       ) : (
         ''
       )}
       {/* 引用RT */}
       {props.retweet ? (
-        <div style={{ backgroundColor: 'lightgray', padding: 10 }}>
+        <Paper className={classes.additional}>
           <div>引用RT</div>
           <div style={{ display: 'flex' }}>
             <Tooltip title="引用RTを解除">
@@ -274,13 +275,13 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
               user={props.retweet.user}
             />
           </div>
-        </div>
+        </Paper>
       ) : (
         ''
       )}
       {/* アップロード */}
       <div>
-        <Dropzone accept="image/gif,image/jpeg,image/png,image/jpg,video/mp4" onDrop={handleDrop}>
+        <Dropzone accept="image/gif,image/jpeg,image/png,image/jpg,video/mp4" onDrop={handleDrop as any}>
           {({ getRootProps, getInputProps }) => (
             <section>
               <div {...getRootProps()}>
@@ -324,9 +325,15 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
 
       {/* 投稿 */}
       <div className={classes.control}>
-        <Button className={classes.controlButton} variant={'contained'} color={'default'} onClick={toggleTemplate}>
-          テンプレート
-        </Button>
+        <div className={classes.controlButton}>
+          <Button
+            variant={'contained'}
+            onClick={toggleTemplate}
+            style={{ backgroundColor: compColor(props.theme.theme.palette.background.paper), color: compColor(props.theme.theme.palette.text.primary) }}
+          >
+            テンプレート
+          </Button>
+        </div>
 
         <Button
           className={classes.controlButton}
@@ -341,12 +348,12 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
 
       {/* テンプレート */}
       <Modal open={showTemplate} modalClose={toggleTemplate}>
-        <div style={{ height: '80vh', width: '80vw', backgroundColor: 'white', padding: 5 }}>
+        <Paper style={{ height: '80vh', width: '80vw', padding: 5, maxWidth: '600px' }}>
           {/* ゲーム選択 */}
           <div style={{ padding: 5 }}>
             <FormControl style={{ width: '100%' }}>
               <InputLabel>ゲーム選択</InputLabel>
-              <Select value={templateGameIndex} onChange={handleChangeGame}>
+              <Select value={templateGameIndex as any} onChange={handleChangeGame}>
                 {props.gameList.map((game, index) => (
                   <MenuItem key={index.toString()} value={index}>
                     {game.gamename}
@@ -360,24 +367,26 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
           <div style={{ padding: 5, height: 'calc(80vh - 85px)', overflowY: 'scroll' }}>
             {templateList.map((template, index) => (
               <div key={index.toString()} style={{ marginBottom: 20 }}>
+                <Typography variant="body1">{template.title}</Typography>
                 <TextField
-                  style={{ width: '100%', backgroundColor: '#ddd' }}
+                  style={{ width: '100%' }}
                   variant="outlined"
                   multiline={true}
                   InputProps={{
                     readOnly: true,
                   }}
-                  value={template}
+                  value={template.contents}
+                  disabled={true}
                 />
                 <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                  <Button variant={'contained'} size={'small'} color={'primary'} onClick={handleTemplateApply(template)} disabled={Number.isNaN(templateGameIndex)}>
+                  <Button variant={'contained'} size={'small'} color={'primary'} onClick={handleTemplateApply(template.contents)} disabled={Number.isNaN(templateGameIndex)}>
                     反映
                   </Button>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </Paper>
       </Modal>
 
       {/* プレビュー拡大表示 */}
@@ -404,7 +413,9 @@ const mapStateToProps = (state: RootState) => {
     mediaList: state.reducer.post.media,
     gameList: state.reducer.game,
     template: state.reducer.config.tweetTemplate,
+    tweetFooter: state.reducer.config.tweetFooter,
     disabled: ['posting', 'uploading'].includes(state.reducer.status),
+    theme: state.reducer.theme,
   };
 };
 

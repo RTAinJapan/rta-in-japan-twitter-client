@@ -1,23 +1,21 @@
 import React from 'react';
-import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
+import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      position: 'fixed',
-      bottom: 0,
-      width: '100%',
-    },
-  }),
-);
+const useStyles = makeStyles({
+  root: {
+    position: 'fixed',
+    bottom: 0,
+    width: '100%',
+  },
+});
 
 type ComponentProps = {};
 type ActionProps = {};
 
 type PropsType = ComponentProps & ActionProps;
-const Footer: React.SFC<PropsType> = (props: PropsType) => {
-  const classes = useStyles({});
+const Footer: React.FC<PropsType> = (props: PropsType) => {
+  const classes = useStyles();
 
   const label = {
     copyright: '© 2019 RTA in Japan All rights reserved.',

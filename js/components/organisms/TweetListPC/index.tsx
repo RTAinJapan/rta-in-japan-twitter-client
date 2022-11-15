@@ -1,17 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import * as actions from '../../../actions';
 import { RootState } from '../../../reducers';
 import TweetList from '../../molecules/TweetList';
-import Typography from '@material-ui/core/Typography';
-import Fab from '@material-ui/core/Fab';
-import RefreshIcon from '@material-ui/icons/Refresh';
+import Typography from '@mui/material/Typography';
+import Fab from '@mui/material/Fab';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { Theme } from '@mui/material';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
+const useStyles = (theme: Theme) =>
+  makeStyles({
     root: {
       display: 'flex',
+      position: 'relative',
     },
     column: {
       width: 'calc(100vw / 3 - 50px)',
@@ -26,15 +28,14 @@ const useStyles = makeStyles((theme: Theme) =>
       bottom: theme.spacing(5),
       right: theme.spacing(2),
     },
-  }),
-);
+  })();
 
 type ComponentProps = ReturnType<typeof mapStateToProps>;
 type ActionProps = typeof mapDispatchToProps;
 
 type PropsType = ComponentProps & ActionProps;
 const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
-  const classes = useStyles({});
+  const classes = useStyles(props.theme.theme);
 
   return (
     <div className={classes.root}>
@@ -56,9 +57,11 @@ const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
           <TweetList tweets={props.list.hash} />
         </div>
       </div>
-      <Fab className={classes.reloadButton} color={'primary'} onClick={() => props.reloadTweet()}>
-        <RefreshIcon />
-      </Fab>
+      <div style={{ height: '100%' }}>
+        <Fab className={classes.reloadButton} style={{ position: 'absolute', bottom: 10, right: 35 }} color={'primary'} onClick={() => props.reloadTweet()}>
+          <RefreshIcon />
+        </Fab>
+      </div>
     </div>
   );
 };
@@ -67,6 +70,7 @@ const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
 const mapStateToProps = (state: RootState) => {
   return {
     list: state.reducer.twitterTimeline,
+    theme: state.reducer.theme,
   };
 };
 

@@ -1,45 +1,67 @@
 {
   "api": {
-    "twitterBase": "https://rtain.jp/api/ajax/?url=https://rtain.jp/api/twitter/",
-    "runner": "https://rtain.jp/api/ajax/?url=https://script.google.com/macros/s/AKfycbxdcOipT16kLLMSkyktIynLkM3PXYcekk8XDuKKgLKHVX24R7ogQ47MecR4PflvVII/exec"
+    "twitterBase": "http://localhost:8000/api/twitter/",
+    "runner": "https://script.google.com/macros/s/xxxxxxxxxxxxxxxxxxxxxxxxxx/exec",
+    "webhook": "https://discord.com/api/webhooks/xxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxx"
   },
   "twitter": {
     "isAllowDeleteTweet": false
   },
   "discord": {
     "config": {
-      "clientId": "627778242727641088",
+      "clientId": "",
       "clientSecret": "",
-      "redirectUrl": "https://rtain.jp/util/twitter/login/discord",
+      "redirectUrl": "",
       "scope": "identify%20guilds"
     },
-    "guild": "247368306896404480",
-    "roles": ["247369833300230144", "640861896995766272"],
-    "users": [
-      "153506819317301248",
-      "159600065017675778",
-      "142622240863813632",
-      "204527119445786626",
-      "258600299491491842",
-      "242075173275041792",
-      "131399322360217600",
-      "263950176950026250",
-      "163962550780821506",
-      "767386043531657216"
-    ]
+    "guild": "",
+    "roles": [],
+    "users": []
   },
-  "tweetTemplate": {
-    "withCommentary": [
-      "次のタイムアタックは『{game}』\nカテゴリーは「{category}」\n走者は{runners}です。\n解説は{commentaries}です。",
-      "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}、解説の{commentaries}、お疲れさまでした。\nクリアタイムはxx:xx:xxでした。"
-    ],
-    "withOutCommentary": [
-      "次のタイムアタックは『{game}』\nカテゴリーは「{category}」\n走者は{runners}です。",
-      "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}お疲れさまでした。\nクリアタイムはxx:xx:xxでした。"
-    ],
-    "common": ["現在のタイムアタックは『{game}』\n\n"],
-    "footer": "配信はこちらから⇒https://www.twitch.tv/rtainjapan\n#RTAinJapan"
-  },
+  "tweetTemplate": [
+    {
+      "title": "次のゲーム",
+      "type": "withCommentary",
+      "text": "次のタイムアタックは『{game}』\nカテゴリーは「{category}」\n走者は{runners}です。\n解説は{commentaries}です。"
+    },
+    {
+      "title": "ゲーム終了 クリアタイム有",
+      "type": "withCommentary",
+      "text": "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}、解説の{commentaries}、お疲れさまでした。\nクリアタイムはxx:xx:xxでした。"
+    },
+    {
+      "title": "ゲーム終了 クリアタイム無",
+      "type": "withCommentary",
+      "text": "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}、解説の{commentaries}、お疲れさまでした。"
+    },
+    {
+      "title": "次のゲーム",
+      "type": "withOutCommentary",
+      "text": "次のタイムアタックは『{game}』\nカテゴリーは「{category}」\n走者は{runners}です。"
+    },
+    {
+      "title": "ゲーム終了 クリアタイム有",
+      "type": "withOutCommentary",
+      "text": "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}お疲れさまでした。\nクリアタイムはxx:xx:xxでした。"
+    },
+    {
+      "title": "ゲーム終了 クリアタイム無",
+      "type": "withOutCommentary",
+      "text": "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}お疲れさまでした。"
+    },
+    {
+      "title": "ゲーム終了 クリアタイムだけ別でツイート",
+      "type": "common",
+      "text": "『{game}』\nクリアタイムは次の通りです\n",
+      "additional": "{run} xx:xx:xx"
+    },
+    {
+      "title": "ゲーム中",
+      "type": "common",
+      "text": "現在のタイムアタックは『{game}』\n\n"
+    }
+  ],
+  "tweetFooter": "配信はこちらから⇒https://www.twitch.tv/rtainjapan\n#RTAinJapan",
   "link": [
     {
       "name": "RTA in Japan",

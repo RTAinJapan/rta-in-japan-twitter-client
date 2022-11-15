@@ -2,7 +2,9 @@ import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 import * as actions from '../actions';
 import { PreviewFile, Config } from '../types/global';
-import { Tweets, Game } from '../types/api';
+import { Tweets, Game, Media } from '../types/api';
+import customTheme from '../theme';
+import { Theme } from '@mui/material';
 type Action = ActionType<typeof actions>;
 
 export type DialogState = {
@@ -47,6 +49,12 @@ export type GlobalState = {
     /** ハッシュタグで検索した結果 */
     hash: Tweets[];
   };
+  /** プレビュー */
+  mediaPreview: {
+    isShow: boolean;
+    media: Media[];
+    showIndex: number;
+  };
   /** Twitterに投稿する内容 */
   post: {
     text: string;
@@ -63,6 +71,11 @@ export type GlobalState = {
   game: Game[];
   /** 設定ファイルの内容 */
   config: Config;
+  /** テーマ設定 */
+  theme: {
+    mode: 'light' | 'dark';
+    theme: Theme;
+  };
 };
 
 export type RootState = {
@@ -93,6 +106,11 @@ const initial: GlobalState = {
     user: [],
     mention: [],
     hash: [],
+  },
+  mediaPreview: {
+    isShow: false,
+    media: [],
+    showIndex: 0,
   },
   post: {
     text: '',
@@ -128,6 +146,10 @@ const initial: GlobalState = {
       footer: '',
     },
     link: [],
+  },
+  theme: {
+    mode: 'light',
+    theme: customTheme('light'),
   },
 };
 
@@ -232,6 +254,45 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
       return {
         ...state,
         game: action.payload,
+      };
+    }
+    case getType(actions.updateTheme): {
+      localStorage.setItem('theme', action.payload);
+      return {
+        ...state,
+        theme: {
+          mode: action.payload,
+          theme: customTheme(action.payload),
+        },
+      };
+    }
+    case getType(actions.showMedia): {
+      return {
+        ...state,
+        mediaPreview: {
+          isShow: true,
+          showIndex: action.payload.index,
+          media: action.payload.media,
+        },
+      };
+    }
+    case getType(actions.closeMedia): {
+      return {
+        ...state,
+        mediaPreview: {
+          isShow: false,
+          showIndex: 0,
+          media: [],
+        },
+      };
+    }
+    case getType(actions.changeMediaIndex): {
+      return {
+        ...state,
+        mediaPreview: {
+          ...state.mediaPreview,
+          showIndex: action.payload,
+        },
       };
     }
     default:

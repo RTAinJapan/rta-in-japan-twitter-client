@@ -1,20 +1,76 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { colors } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 
-export const theme = createMuiTheme({
+const lighttheme = createTheme({
   // MaterialUIのCSSを上書きする
-  overrides: {
+  components: {
     MuiGrid: {
-      item: {
-        padding: 12,
-        width: '100%',
+      styleOverrides: {
+        item: {
+          padding: 12,
+          width: '100%',
+        },
       },
     },
     MuiTab: {
-      wrapper: {
-        whiteSpace: 'nowrap',
+      styleOverrides: {
+        wrapped: {
+          whiteSpace: 'nowrap',
+        },
       },
     },
   },
-  // MaterialUIのCSSのオンオフ切り替える
-  props: {},
 });
+
+const darktheme = createTheme({
+  // MaterialUIのCSSを上書きする
+  components: {
+    MuiGrid: {
+      styleOverrides: {
+        item: {
+          padding: 12,
+          width: '100%',
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        wrapped: {
+          whiteSpace: 'nowrap',
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#15202B',
+          backgroundImage: 'inherit',
+        },
+      },
+    },
+    // MuiButtonBase: {
+    //   styleOverrides: {
+    //     root: {
+    //       backgroundColor: '#15202B',
+    //     },
+    //   },
+    // },
+  },
+  palette: {
+    primary: {
+      main: colors.blue[800],
+    },
+    background: {
+      default: '#15202B',
+    },
+    mode: 'dark',
+  },
+});
+
+const customTheme = (mode: string | null) => {
+  if (mode === 'dark') return darktheme;
+
+  return lighttheme;
+};
+
+export default customTheme;

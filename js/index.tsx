@@ -4,17 +4,13 @@ import { Provider } from 'react-redux';
 import './index.css';
 import App from './components/pages/App';
 import configureStore from './store';
-import { MuiThemeProvider } from '@material-ui/core';
-import { theme } from './theme';
 import * as serviceWorker from './serviceWorker';
 import { SWUpdateDialog } from './components/organisms/SWUpdateDialog';
 
 ReactDOM.render(
-  <MuiThemeProvider theme={theme}>
-    <Provider store={configureStore()}>
-      <App />
-    </Provider>
-  </MuiThemeProvider>,
+  <Provider store={configureStore()}>
+    <App />
+  </Provider>,
   document.getElementById('root'),
 );
 

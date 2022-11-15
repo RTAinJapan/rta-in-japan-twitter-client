@@ -1,3 +1,5 @@
+import { Game } from './api';
+
 declare global {
   interface Window {
     __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
@@ -12,6 +14,8 @@ export type PreviewFile = File & {
   preview: any;
 };
 
+export type RunnersAPI = { status: string; version: string; data: Game[] };
+
 export type Config = {
   /** APIの設定 */
   api: {
@@ -19,6 +23,8 @@ export type Config = {
     twitterBase: string;
     /** 走者情報APIのURL */
     runner: string;
+    /** WebhookのURL */
+    webhook: string;
   };
   twitter: {
     /** ツイート削除の許可 */
@@ -41,11 +47,12 @@ export type Config = {
     users: string[];
   };
   tweetTemplate: {
-    withCommentary: string[];
-    withOutCommentary: string[];
-    common: string[];
-    footer: string;
-  };
+    title: string;
+    type: 'withCommentary' | 'withOutCommentary' | 'common';
+    text: string;
+    additional?: string;
+  }[];
+  tweetFooter: string;
   link: {
     name: string;
     url: string;

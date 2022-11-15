@@ -2,14 +2,17 @@ import { select, call, put, take, takeEvery, race } from 'redux-saga/effects';
 import * as actions from '../actions';
 import { alertSaga, confirmSaga } from './dialog';
 import { RootState } from '../reducers';
-import { PreviewFile, Config, GeneratorType } from '../types/global';
+import { PreviewFile, Config, GeneratorType, RunnersAPI } from '../types/global';
 import { loginCheck, logoutDiscord, oauthDiscord } from './discord';
-import { fetchJson } from './common';
+import { fetchJson, postJson } from './common';
 import { twitterApi } from './twitterUtil';
-import { Game } from '../types/api';
 
 export default function* rootSaga() {
+  // テーマ設定
+  yield call(setTheme);
+  // 設定読み込み
   yield call(fetchConfig);
+
   yield takeEvery(actions.loginDiscord, oauthDiscord);
   yield takeEvery(actions.reloadTweetList, fetchTweetListAndApplyState);
   yield takeEvery(actions.submitTweet, submitTweet);
@@ -25,7 +28,9 @@ export default function* rootSaga() {
   yield call(loginCheck);
   // yield put(actions.storeDiscordUserName('テストユーザ'));
 
+  // ツイート情報
   yield call(fetchTweetListAndApplyState);
+  // ゲーム情報
   yield call(fetchGameListAndApplyState);
 }
 
@@ -39,11 +44,43 @@ function* errorHandler(error: any) {
   }
 }
 
+function* setTheme() {
+  try {
+    const theme = localStorage.getItem('theme');
+    if (!theme) {
+      // まだテーマが設定されてない場合はOSのテーマ設定を取得して適用
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches == true) {
+        console.log('ダークモードだ');
+        yield put(actions.updateTheme('dark'));
+      } else {
+        console.log('ダークモードじゃない');
+      }
+    } else {
+      if (['light', 'dark'].includes(theme)) {
+        yield put(actions.updateTheme(theme as any));
+      }
+    }
+  } catch (e) {
+    //
+  }
+}
+
 function* fetchConfig() {
   try {
     const time = new Date().getTime();
     const config: Config = yield call(fetchJson, `./config.json?t=${time}`);
     yield put(actions.storeConfig(config));
+
+    // localstorageにあれば読み込む
+    try {
+      const localDataStr = localStorage.getItem('runners');
+      if (localDataStr) {
+        const localData: RunnersAPI = JSON.parse(localDataStr);
+        yield put(actions.updateGameList(localData.data));
+      }
+    } catch (e) {
+      //
+    }
   } catch (error) {
     yield call(errorHandler, error);
   }
@@ -88,10 +125,24 @@ function* fetchGameListAndApplyState() {
 
     yield put(actions.changeNotify(true, 'info', '走者データ取得中'));
 
-    const result: { status: string; data: Game[] } = yield call(fetchJson, state.reducer.config.api.runner);
+    const result: RunnersAPI = yield call(fetchJson, state.reducer.config.api.runner);
+    // versionがlocalstorageと異なれば破棄
+    try {
+      const localDataStr = localStorage.getItem('runners');
+      if (localDataStr) {
+        const localData: RunnersAPI = JSON.parse(localDataStr);
+        if (localData.version !== result.version) {
+          localStorage.removeItem('runners');
+        }
+      }
+    } catch (e) {
+      //
+    }
+
     if (result.status !== 'ok') {
       throw new Error('走者情報の取得に失敗');
     }
+    localStorage.setItem('runners', JSON.stringify(result));
     yield put(actions.updateGameList(result.data));
 
     yield put(actions.changeNotify(true, 'info', '走者データ取得完了'));
@@ -144,6 +195,22 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
     // 完了通知
     yield put(actions.changeNotify(true, 'info', 'ツイートしました。'));
     yield put(actions.updateStatus('ok'));
+
+    // Webhookに通知
+    try {
+      if (state.reducer.config.api.webhook) {
+        const actionUsername = state.reducer.discord.username;
+        const postId = postResult.data[0].id_str;
+        const username = postResult.data[0].user.screen_name;
+        const url = `https://twitter.com/${username}/status/${postId}`;
+        const body = {
+          content: `${actionUsername} がツイートを実行\n\n ${action.payload} \n\nツイートURL: ${url}`,
+        };
+        yield call(postJson, state.reducer.config.api.webhook, body);
+      }
+    } catch (e) {
+      //
+    }
   } catch (error) {
     yield call(errorHandler, error);
   }
@@ -255,12 +322,17 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
       const orgMedia = state.reducer.post.media;
 
       (nowMedia as PreviewFile).preview = URL.createObjectURL(nowMedia);
-
       console.debug(nowMedia);
-      const filename = nowMedia.name;
+
+      // なんかアップロードする時に一部の文字列が入ってるとエラーになるので、時刻で上書きする
+      const fileName = nowMedia.name;
+      const fileExtention = fileName.substring(fileName.lastIndexOf('.') + 1);
+      const blob = nowMedia.slice(0, nowMedia.size, nowMedia.type);
+      const renamedFile = new File([blob], `${new Date().getTime()}${fileExtention}`, { type: nowMedia.type });
+
       yield put(actions.updateStatus('uploading'));
-      yield put(actions.changeNotify(true, 'info', `ファイルアップロード中: ${filename}`, false));
-      const uploadResult: GeneratorType<typeof twitterApi.postMediaUpload> = yield call(twitterApi.postMediaUpload, state.reducer.config.api.twitterBase, nowMedia);
+      yield put(actions.changeNotify(true, 'info', `ファイルアップロード中: ${fileName}`, false));
+      const uploadResult: GeneratorType<typeof twitterApi.postMediaUpload> = yield call(twitterApi.postMediaUpload, state.reducer.config.api.twitterBase, renamedFile);
       if (uploadResult.error) throw uploadResult.error;
 
       yield put(
@@ -277,7 +349,8 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
     yield put(actions.changeNotify(true, 'info', 'ファイルアップロード完了'));
     yield put(actions.updateStatus('ok'));
   } catch (error) {
-    yield call(errorHandler, error);
+    yield call(errorHandler, { message: 'ファイルアップロードに失敗' });
+    console.error(error);
   }
 }
 
