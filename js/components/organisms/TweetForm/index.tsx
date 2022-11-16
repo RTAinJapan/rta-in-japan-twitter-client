@@ -244,11 +244,11 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
               </IconButton>
             </Tooltip>
             <Tweet
-              id_str={props.replyTweet.id_str}
-              full_text={props.replyTweet.full_text}
+              id={props.replyTweet.id}
+              text={props.replyTweet.text}
               created_at={props.replyTweet.created_at}
-              display_text_range={props.replyTweet.display_text_range}
               entities={props.replyTweet.entities}
+              media={props.replyTweet.media}
               user={props.replyTweet.user}
             />
           </div>
@@ -267,10 +267,10 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
               </IconButton>
             </Tooltip>
             <Tweet
-              id_str={props.retweet.id_str}
-              full_text={props.retweet.full_text}
+              id={props.retweet.id}
+              text={props.retweet.text}
               created_at={props.retweet.created_at}
-              display_text_range={props.retweet.display_text_range}
+              media={props.retweet.media}
               entities={props.retweet.entities}
               user={props.retweet.user}
             />

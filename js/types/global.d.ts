@@ -32,6 +32,7 @@ export type Config = {
   };
   /** Discordの設定 */
   discord: {
+    enable: boolean;
     config: {
       baseUrl: string;
       clientId: string;

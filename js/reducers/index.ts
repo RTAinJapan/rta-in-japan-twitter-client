@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 import * as actions from '../actions';
 import { PreviewFile, Config } from '../types/global';
-import { Tweets, Game, Media } from '../types/api';
+import { Statuses, Game, Media } from '../types/api';
 import customTheme from '../theme';
 import { Theme } from '@mui/material';
 type Action = ActionType<typeof actions>;
@@ -43,11 +43,11 @@ export type GlobalState = {
   /** ツイート一覧 */
   twitterTimeline: {
     /** 自分の結果 */
-    user: Tweets[];
+    user: Statuses[];
     /** メンションの結果 */
-    mention: Tweets[];
+    mention: Statuses[];
     /** ハッシュタグで検索した結果 */
-    hash: Tweets[];
+    hash: Statuses[];
   };
   /** プレビュー */
   mediaPreview: {
@@ -59,13 +59,13 @@ export type GlobalState = {
   post: {
     text: string;
     media: {
-      media_id_string: string;
+      media_iding: string;
       file: PreviewFile;
     }[];
     /** 返信先のツイートID */
-    in_reply_to_status_id: Tweets | null;
+    in_reply_to_status_id: Statuses | null;
     /** 引用RTで引用するURL */
-    attachment_url: Tweets | null;
+    attachment_url: Statuses | null;
   };
   /** ゲーム情報 */
   game: Game[];

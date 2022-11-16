@@ -1,7 +1,7 @@
 import { createAction } from 'typesafe-actions';
 import { PreviewFile, Config } from '../types/global';
 import { DialogState, RootState } from '../reducers';
-import { Tweets, Game, Media } from '../types/api';
+import { Statuses, Game, Media } from '../types/api';
 
 const OPEN_NOTIFY = 'OPEN_NOTIFY';
 const CLOSE_NOTIFY = 'CLOSE_NOTIFY';
@@ -66,7 +66,7 @@ export const reloadTweetList = createAction(RELOAD_TWEET_LIST);
 
 /** ツイート取得結果更新 */
 export const updateTweetList = createAction(UPDATE_TWEET_LIST, (action) => {
-  return (list: Tweets[], type: 'user' | 'hash' | 'mention') => action({ list, type });
+  return (list: Statuses[], type: 'user' | 'hash' | 'mention') => action({ list, type });
 });
 
 /** 投稿テキストの格納 */
@@ -86,7 +86,7 @@ export const deleteTweet = createAction(DELETE_TWEET, (action) => {
 
 /** 返信先設定 */
 export const addReplyTweet = createAction(ADD_REPLY_TWEET, (action) => {
-  return (tweet: Tweets) => action(tweet);
+  return (tweet: Statuses) => action(tweet);
 });
 
 /** 返信先解除 */
@@ -96,7 +96,7 @@ export const deleteReplyTweet = createAction(DELETE_REPLY_TWEET, (action) => {
 
 /** 引用先設定 */
 export const addAttachUrl = createAction(ADD_ATTACH_URL, (action) => {
-  return (tweet: Tweets) => action(tweet);
+  return (tweet: Statuses) => action(tweet);
 });
 
 /** 引用先解除 */
@@ -111,7 +111,7 @@ export const uploadMedia = createAction(UPLOAD_MEDIA, (action) => {
 
 /** アップロードするファイルをリストに登録 */
 export const storeMedia = createAction(STORE_MEDIA, (action) => {
-  return (medias: { file: PreviewFile; media_id_string: string }[]) => action(medias);
+  return (medias: { file: PreviewFile; media_iding: string }[]) => action(medias);
 });
 
 /** アップロードするファイルを取消 */

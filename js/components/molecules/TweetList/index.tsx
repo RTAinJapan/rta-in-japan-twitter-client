@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@mui/styles';
 import Tweet from '../Tweet';
 import Paper from '@mui/material/Paper';
-import { Tweets } from '../../../types/api';
+import { Statuses } from '../../../types/api';
 
 const useStyles = makeStyles({
   root: {
@@ -30,7 +30,7 @@ const useStyles = makeStyles({
 });
 
 export type ComponentProps = {
-  tweets: Tweets[];
+  tweets: Statuses[];
 };
 export type ActionProps = {
   deleteTweet?: any;
@@ -53,7 +53,7 @@ const TweetList: React.SFC<PropsType> = (props) => {
       {props.tweets.length === 0 && <div className={classes.tweetContent}>{label.noTweet}</div>}
       <div className={classes.list}>
         {props.tweets.map((item, index) => (
-          <div className={classes.tweet} key={`${item.id_str}_${index}`}>
+          <div className={classes.tweet} key={`${item.id}_${index}`}>
             <div className={classes.tweetContent}>
               <Tweet {...item} deleteTweet={props.deleteTweet} replyTweet={props.replyTweet} retweet={props.retweet} />
             </div>

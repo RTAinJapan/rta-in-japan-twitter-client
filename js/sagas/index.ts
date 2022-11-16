@@ -26,7 +26,6 @@ export default function* rootSaga() {
   yield takeEvery(actions.logoutDiscord, logoutDiscord);
 
   yield call(loginCheck);
-  // yield put(actions.storeDiscordUserName('テストユーザ'));
 
   // ツイート情報
   yield call(fetchTweetListAndApplyState);
@@ -165,12 +164,12 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
     yield put(actions.updateStatus('posting'));
     yield put(actions.updateTweetText(action.payload));
 
-    const mediaIds: string[] = state.reducer.post.media.map((media) => media.media_id_string);
+    const mediaIds: string[] = state.reducer.post.media.map((media) => media.media_iding);
 
-    const in_reply_to_status_id = state.reducer.post.in_reply_to_status_id ? state.reducer.post.in_reply_to_status_id.id_str : null;
-    let attachment_url = '';
+    const in_reply_to_status_id = state.reducer.post.in_reply_to_status_id ? state.reducer.post.in_reply_to_status_id.id : null;
+    let attachment_url: string | null = null;
     if (state.reducer.post.attachment_url) {
-      const id = state.reducer.post.attachment_url.id_str;
+      const id = state.reducer.post.attachment_url.id;
       const screenName = state.reducer.post.attachment_url.user.screen_name;
       attachment_url = `https://twitter.com/${screenName}/status/${id}`;
     }
@@ -200,7 +199,7 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
     try {
       if (state.reducer.config.api.webhook) {
         const actionUsername = state.reducer.discord.username;
-        const postId = postResult.data[0].id_str;
+        const postId = postResult.data[0].id;
         const username = postResult.data[0].user.screen_name;
         const url = `https://twitter.com/${username}/status/${postId}`;
         const body = {
@@ -223,10 +222,10 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
 function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
   try {
     const state: RootState = yield select();
-    const deleteTargetTweet = state.reducer.twitterTimeline.user.filter((tweet) => tweet.id_str === action.payload);
+    const deleteTargetTweet = state.reducer.twitterTimeline.user.filter((tweet) => tweet.id === action.payload);
 
     if (state.reducer.config.twitter.isAllowDeleteTweet) {
-      const isContinue: boolean = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].full_text}`);
+      const isContinue: boolean = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].text}`);
       if (!isContinue) return;
       yield put(actions.changeNotify(true, 'info', '削除要求中'));
 
@@ -243,8 +242,8 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
       yield put(actions.changeNotify(true, 'info', '削除完了'));
       yield put(actions.updateStatus('ok'));
     } else {
-      const tweetText = deleteTargetTweet[0].full_text;
-      const url = `https://twitter.com/${deleteTargetTweet[0].user.screen_name}/status/${deleteTargetTweet[0].id_str}`;
+      const tweetText = deleteTargetTweet[0].text;
+      const url = `https://twitter.com/${deleteTargetTweet[0].user.screen_name}/status/${deleteTargetTweet[0].id}`;
       yield call(alertSaga, `このツイートを削除したい場合、以下を運営に連絡してください`, 'info', `${url}\n\n${tweetText}`);
     }
   } catch (error) {
@@ -340,7 +339,7 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
           ...orgMedia,
           {
             file: nowMedia as PreviewFile,
-            media_id_string: uploadResult.data.media_id_string,
+            media_iding: uploadResult.data.media_iding,
           },
         ]),
       );
