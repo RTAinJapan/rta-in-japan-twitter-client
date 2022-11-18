@@ -35,7 +35,7 @@ export default function* rootSaga() {
 
 function* errorHandler(error: any) {
   try {
-    const message = (error.message as string) || '予期せぬエラーが発生しました。';
+    const message = error ? (error.message as string) : '予期せぬエラーが発生しました。';
     yield put(actions.changeNotify(true, 'error', message));
     yield put(actions.updateStatus('error'));
   } catch (e) {
@@ -96,15 +96,29 @@ function* fetchTweetListAndApplyState() {
 
     yield put(actions.changeNotify(true, 'info', 'ツイート取得中'));
 
+    let error: any = null;
+
     let tweet: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
-    if (tweet.error) throw tweet.error;
-    yield put(actions.updateTweetList(tweet.data, 'user'));
+    if (tweet.code === 0) {
+      yield put(actions.updateTweetList(tweet.data, 'user'));
+    } else {
+      error = tweet.error;
+    }
+
     tweet = yield call(twitterApi.getStatusesMentionsTimeLine, state.reducer.config.api.twitterBase);
-    if (tweet.error) throw tweet.error;
-    yield put(actions.updateTweetList(tweet.data, 'mention'));
+    if (tweet.code === 0) {
+      yield put(actions.updateTweetList(tweet.data, 'mention'));
+    } else {
+      error = tweet.error;
+    }
+
     tweet = yield call(twitterApi.getStatusesHash, state.reducer.config.api.twitterBase);
-    if (tweet.error) throw tweet.error;
-    yield put(actions.updateTweetList(tweet.data, 'hash'));
+    if (tweet.code !== 0) {
+      yield put(actions.updateTweetList(tweet.data, 'hash'));
+    } else {
+      error = tweet.error;
+    }
+    if (error) throw error;
 
     yield put(actions.changeNotify(true, 'info', 'ツイート取得完了'));
   } catch (error) {
@@ -167,11 +181,10 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
     const mediaIds: string[] = state.reducer.post.media.map((media) => media.media_iding);
 
     const in_reply_to_status_id = state.reducer.post.in_reply_to_status_id ? state.reducer.post.in_reply_to_status_id.id : null;
-    let attachment_url: string | null = null;
-    if (state.reducer.post.attachment_url) {
-      const id = state.reducer.post.attachment_url.id;
-      const screenName = state.reducer.post.attachment_url.user.screen_name;
-      attachment_url = `https://twitter.com/${screenName}/status/${id}`;
+    let quote_tweet_id: string | null = null;
+    if (state.reducer.post.attachment_tweet) {
+      const id = state.reducer.post.attachment_tweet.id;
+      quote_tweet_id = id;
     }
 
     const postResult: GeneratorType<typeof twitterApi.postStatusesUpdate> = yield call(
@@ -180,9 +193,9 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
       action.payload,
       mediaIds,
       in_reply_to_status_id,
-      attachment_url,
+      quote_tweet_id,
     );
-    if (postResult.error) throw postResult.error;
+    if (postResult.code !== 0) throw postResult.error;
 
     yield put(actions.updateTweetList(postResult.data, 'user'));
 
@@ -200,7 +213,7 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
       if (state.reducer.config.api.webhook) {
         const actionUsername = state.reducer.discord.username;
         const postId = postResult.data[0].id;
-        const username = postResult.data[0].user.screen_name;
+        const username = postResult.data[0].user.username;
         const url = `https://twitter.com/${username}/status/${postId}`;
         const body = {
           content: `${actionUsername} がツイートを実行\n\n ${action.payload} \n\nツイートURL: ${url}`,
@@ -232,18 +245,18 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
       yield put(actions.updateStatus('posting'));
       // 削除実行
       const result: GeneratorType<typeof twitterApi.postStatusesDestroy> = yield call(twitterApi.postStatusesDestroy, state.reducer.config.api.twitterBase, action.payload);
-      if (result.error) throw result.error;
+      if (result.code !== 0) throw result.error;
 
       // 新しいリストを取得
       const newTweetList: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
-      if (newTweetList.error) throw newTweetList.error;
+      if (newTweetList.code !== 0) throw newTweetList.error;
       yield put(actions.updateTweetList(newTweetList.data, 'user'));
 
       yield put(actions.changeNotify(true, 'info', '削除完了'));
       yield put(actions.updateStatus('ok'));
     } else {
       const tweetText = deleteTargetTweet[0].text;
-      const url = `https://twitter.com/${deleteTargetTweet[0].user.screen_name}/status/${deleteTargetTweet[0].id}`;
+      const url = `https://twitter.com/${deleteTargetTweet[0].user.username}/status/${deleteTargetTweet[0].id}`;
       yield call(alertSaga, `このツイートを削除したい場合、以下を運営に連絡してください`, 'info', `${url}\n\n${tweetText}`);
     }
   } catch (error) {
@@ -332,7 +345,7 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
       yield put(actions.updateStatus('uploading'));
       yield put(actions.changeNotify(true, 'info', `ファイルアップロード中: ${fileName}`, false));
       const uploadResult: GeneratorType<typeof twitterApi.postMediaUpload> = yield call(twitterApi.postMediaUpload, state.reducer.config.api.twitterBase, renamedFile);
-      if (uploadResult.error) throw uploadResult.error;
+      if (uploadResult.code !== 0) throw uploadResult.error;
 
       yield put(
         actions.storeMedia([

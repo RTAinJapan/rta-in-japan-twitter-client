@@ -64,8 +64,8 @@ export type GlobalState = {
     }[];
     /** 返信先のツイートID */
     in_reply_to_status_id: Statuses | null;
-    /** 引用RTで引用するURL */
-    attachment_url: Statuses | null;
+    /** 引用RTで引用するツイート */
+    attachment_tweet: Statuses | null;
   };
   /** ゲーム情報 */
   game: Game[];
@@ -116,18 +116,20 @@ const initial: GlobalState = {
     text: '',
     media: [],
     in_reply_to_status_id: null,
-    attachment_url: null,
+    attachment_tweet: null,
   },
   game: [],
   config: {
     api: {
       twitterBase: '',
       runner: '',
+      webhook: '',
     },
     twitter: {
       isAllowDeleteTweet: false,
     },
     discord: {
+      enable: true,
       config: {
         baseUrl: '',
         clientId: '',
@@ -139,12 +141,8 @@ const initial: GlobalState = {
       roles: [],
       users: [],
     },
-    tweetTemplate: {
-      withCommentary: [],
-      withOutCommentary: [],
-      common: [],
-      footer: '',
-    },
+    tweetTemplate: [],
+    tweetFooter: '',
     link: [],
   },
   theme: {
@@ -219,7 +217,7 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
         ...state,
         post: {
           ...state.post,
-          attachment_url: action.payload,
+          attachment_tweet: action.payload,
         },
       };
     }
@@ -228,7 +226,7 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
         ...state,
         post: {
           ...state.post,
-          attachment_url: null,
+          attachment_tweet: null,
         },
       };
     }

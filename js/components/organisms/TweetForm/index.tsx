@@ -393,7 +393,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
       <Modal open={showPreview} modalClose={handleClosePreview}>
         <div style={{ maxHeight: '90vh', width: '90vw' }} onClick={handleClosePreview}>
           {props.mediaList[previewMediaIndex] &&
-            (props.mediaList[previewMediaIndex].file.type.includes('video') ? (
+            (props.mediaList[previewMediaIndex].file.type === 'video' ? (
               <video className={classes.media} muted controls src={props.mediaList[previewMediaIndex].file.preview}></video>
             ) : (
               <img className={classes.media} src={props.mediaList[previewMediaIndex].file.preview} />
@@ -409,7 +409,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     tweetText: state.reducer.post.text,
     replyTweet: state.reducer.post.in_reply_to_status_id,
-    retweet: state.reducer.post.attachment_url,
+    retweet: state.reducer.post.attachment_tweet,
     mediaList: state.reducer.post.media,
     gameList: state.reducer.game,
     template: state.reducer.config.tweetTemplate,

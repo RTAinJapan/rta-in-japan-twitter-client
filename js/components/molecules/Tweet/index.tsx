@@ -72,6 +72,7 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
     window.open(url);
   };
 
+  /** サムネをクリックしたら最大化して表示 */
   const handleShowMedia = (index: number) => () => {
     const media = props.media ? props.media : null;
     if (!media) return;
@@ -85,12 +86,15 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
     if (media) {
       return (
         <div>
-          {media.map((med, index) => (
-            // なんかkeyがユニークにならない
-            <div key={`${med.preview_image_url}_${Math.random()}`} onClick={handleShowMedia(index)}>
-              <img style={{ height: 80, objectFit: 'fill', maxWidth: '100%' }} src={`${med.preview_image_url}:small`} />
-            </div>
-          ))}
+          {media.map((med, index) => {
+            const url = med.url ? med.url : med.preview_image_url;
+            return (
+              // なんかkeyがユニークにならない
+              <div key={`${url}_${Math.random()}`} onClick={handleShowMedia(index)}>
+                <img style={{ height: 80, objectFit: 'fill', maxWidth: '100%' }} src={`${url}:small`} />
+              </div>
+            );
+          })}
         </div>
       );
     } else {
@@ -100,7 +104,7 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
 
   return (
     <Paper className={classes.root}>
-      <Avatar src={props.user.profile_image_url_https} />
+      <Avatar src={props.user.profile_image_url} />
       <div style={{ marginLeft: 5, width: '100%' }}>
         {/* ユーザー名、投稿時刻 */}
         <div>
@@ -109,7 +113,7 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
           </Typography>
           <span className={classes.screenName}>
             <Typography style={{ fontSize: 'xx-small' }} variant={'caption'}>
-              @{props.user.screen_name}
+              @{props.user.username}
             </Typography>
           </span>
           <span className={classes.date}>

@@ -18,7 +18,7 @@ export type Statuses = {
   /** ハッシュとかいろいろ */
   entities?: StatusesEntities;
   /** 画像とか動画 */
-  media: Media[];
+  media?: Media[];
   /** 返信先のツイートID */
   in_reply_to_status?: Statuses;
   /** 引用RTの内容 */
@@ -29,8 +29,8 @@ export type User = {
   created_at: string;
   id: string;
   name: string;
-  screen_name: string;
-  profile_image_url_https: string;
+  username: string;
+  profile_image_url: string;
 };
 
 export type StatusesEntities = {
@@ -69,13 +69,27 @@ export type Media = {
   media_key: string;
   /** @example  */
   type: 'animated_gif' | 'photo' | 'video';
-  url: string;
-  /** @example 'https://pbs.twimg.com/media/EYeX7akWsAIP1_1.jpg' */
-  preview_image_url: string;
+  /**
+   * photoの時だけある
+   * @example 'https://pbs.twimg.com/media/FfU1mugVUAA4yum.jpg'
+   */
+  url?: string;
+  /**
+   * videoの時だけある
+   * @example 'https://pbs.twimg.com/ext_tw_video_thumb/1582229783521288194/pu/img/E63l4dXvk1wL6EJm.jpg'
+   */
+  preview_image_url?: string;
   /** @example 1920 */
   width: number;
   /** @example 1080 */
   height: number;
+
+  /** Each media object may have multiple display or playback variants, with different resolutions or formats */
+  variants?: {
+    bit_rate: number;
+    content_type: string;
+    url: string;
+  }[];
 };
 
 // export type Media = {

@@ -9,6 +9,7 @@ import TweetListMobile from '../TweetListMobile';
 import TweetListPC from '../TweetListPC';
 import ArrowBackIosNew from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos';
+import { Media } from '../../../types/api';
 
 const useStyles = () =>
   makeStyles({
@@ -45,13 +46,12 @@ const TweetLists: React.SFC<PropsType> = (props: PropsType) => {
 
     switch (targetMedia.type) {
       case 'video': {
-        const videoInfo = targetMedia.video_info;
-        if (videoInfo) {
-          const mp4Video = videoInfo.variants
+        if (targetMedia.variants) {
+          const mp4Video = targetMedia.variants
             .filter((item) => item.content_type === 'video/mp4')
             .sort((a, b) => {
-              if (a.bitrate > b.bitrate) return 1;
-              if (a.bitrate < b.bitrate) return -1;
+              if (a.bit_rate > b.bit_rate) return 1;
+              if (a.bit_rate < b.bit_rate) return -1;
               return 0;
             });
           if (mp4Video.length > 0) {
@@ -77,7 +77,7 @@ const TweetLists: React.SFC<PropsType> = (props: PropsType) => {
                 </Button>
               )}
             </div>
-            <img style={{ objectFit: 'contain', width: '100%', height: '100%', minWidth: 330 }} src={targetMedia.media_url_https} />
+            <img style={{ objectFit: 'contain', width: '100%', height: '100%', minWidth: 330 }} src={targetMedia.url} />
             <div style={{ width: 50, height: '100%', top: 0, right: 0, position: 'absolute' }}>
               {isLastMedia ? (
                 ''

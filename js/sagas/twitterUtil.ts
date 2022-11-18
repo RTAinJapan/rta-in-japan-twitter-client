@@ -128,7 +128,7 @@ const postStatusesDestroy = async (hostBase: string, id: string): Promise<Sstatu
 };
 
 export const tweetToUrl = (tweet: Statuses): string => {
-  const url = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id}`;
+  const url = `https://twitter.com/${tweet.user.username}/status/${tweet.id}`;
 
   return url;
 };
@@ -136,7 +136,7 @@ export const tweetToUrl = (tweet: Statuses): string => {
 export const tweetToReplyUrl = (tweet: Statuses): string => {
   const { in_reply_to_status } = tweet;
   if (in_reply_to_status) {
-    return `https://twitter.com/${in_reply_to_status.user.screen_name}/status/${tweet.in_reply_to_status}`;
+    return `https://twitter.com/${in_reply_to_status.user.username}/status/${in_reply_to_status.id}`;
   } else {
     return '';
   }
@@ -165,12 +165,12 @@ export const tweetTextUrlReplace = (tweet: Statuses): string => {
     }
 
     // なぜかくっついてくる画像・動画の短縮URLを削除する
-    if (tweet.media) {
-      const mediaList = tweet.media;
-      for (const media of mediaList) {
-        text = text.replace(media.url, '');
-      }
-    }
+    // if (tweet.media) {
+    //   const mediaList = tweet.media;
+    //   for (const media of mediaList) {
+    //     text = text.replace(media.url, '');
+    //   }
+    // }
   } catch (e) {
     // 何かあったらしい
   }
