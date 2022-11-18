@@ -151,15 +151,17 @@ export const tweetTextUrlReplace = (tweet: Statuses): string => {
   let text = tweet.text;
   try {
     if (tweet.entities) {
-      // メンション部分を削る
-      if (tweet.entities.mentions.length > 0) {
-        text = text.slice(tweet.entities.mentions[tweet.entities.mentions.length - 1].end);
-      }
+      // 先頭のメンション部分を削る
+      // なんか無くなったっぽい？
+      // if (tweet.entities.mentions.length > 0) {
+      //   text = text.slice(tweet.entities.mentions[tweet.entities.mentions.length - 1].end);
+      // }
 
       // 謎の短縮URLを展開表示する
       for (const urlinfo of tweet.entities.urls) {
         const replaceTarget = urlinfo.url;
-        const replaceUrl = urlinfo.expanded_url;
+        // メディアなら消す。それ以外なら展開
+        const replaceUrl = urlinfo.media_key ? '' : urlinfo.expanded_url;
         text = text.replace(replaceTarget, replaceUrl);
       }
     }

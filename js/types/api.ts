@@ -46,6 +46,9 @@ export type StatusesEntities = {
     expanded_url: string;
     /** @example twitter.com/TwitterDev/sta… */
     display_url: string;
+
+    /** mediaを一意に特定するkey。メディアに関するURLの時だけある */
+    media_key?: string;
   }[];
 
   hashtags: object[];
