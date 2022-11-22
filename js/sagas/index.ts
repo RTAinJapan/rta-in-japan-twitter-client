@@ -113,7 +113,7 @@ function* fetchTweetListAndApplyState() {
     }
 
     tweet = yield call(twitterApi.getStatusesHash, state.reducer.config.api.twitterBase);
-    if (tweet.code !== 0) {
+    if (tweet.code === 0) {
       yield put(actions.updateTweetList(tweet.data, 'hash'));
     } else {
       error = tweet.error;
@@ -178,7 +178,7 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
     yield put(actions.updateStatus('posting'));
     yield put(actions.updateTweetText(action.payload));
 
-    const mediaIds: string[] = state.reducer.post.media.map((media) => media.media_iding);
+    const mediaIds: string[] = state.reducer.post.media.map((media) => media.media_id_string);
 
     const in_reply_to_status_id = state.reducer.post.in_reply_to_status_id ? state.reducer.post.in_reply_to_status_id.id : null;
     let quote_tweet_id: string | null = null;
@@ -352,7 +352,7 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
           ...orgMedia,
           {
             file: nowMedia as PreviewFile,
-            media_iding: uploadResult.data.media_iding,
+            media_id_string: uploadResult.data.media_id_string,
           },
         ]),
       );

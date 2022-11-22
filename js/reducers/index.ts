@@ -59,7 +59,7 @@ export type GlobalState = {
   post: {
     text: string;
     media: {
-      media_iding: string;
+      media_id_string: string;
       file: PreviewFile;
     }[];
     /** 返信先のツイートID */

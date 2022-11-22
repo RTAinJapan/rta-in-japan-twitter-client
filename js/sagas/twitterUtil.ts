@@ -109,10 +109,10 @@ const postStatusesUpdate = async (
  * @param file
  * @returns
  */
-const postMediaUpload = async (hostBase: string, file: File): Promise<SstatusesResponse<{ media_iding: string }>> => {
+const postMediaUpload = async (hostBase: string, file: File): Promise<SstatusesResponse<{ media_id_string: string }>> => {
   const url = `${hostBase}/media/upload`;
-  const result = await postFile(url, file);
-  return result as SstatusesResponse<{ media_iding: string }>;
+  const result = await postFile(url, file, 'file');
+  return result as SstatusesResponse<{ media_id_string: string }>;
 };
 
 /**

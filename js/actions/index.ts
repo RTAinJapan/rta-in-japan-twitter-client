@@ -111,7 +111,7 @@ export const uploadMedia = createAction(UPLOAD_MEDIA, (action) => {
 
 /** アップロードするファイルをリストに登録 */
 export const storeMedia = createAction(STORE_MEDIA, (action) => {
-  return (medias: { file: PreviewFile; media_iding: string }[]) => action(medias);
+  return (medias: { file: PreviewFile; media_id_string: string }[]) => action(medias);
 });
 
 /** アップロードするファイルを取消 */
