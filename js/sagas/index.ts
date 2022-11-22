@@ -1,7 +1,7 @@
 import { select, call, put, take, takeEvery, race } from 'redux-saga/effects';
 import * as actions from '../actions';
 import { alertSaga, confirmSaga } from './dialog';
-import { RootState } from '../reducers';
+import { DialogState, RootState } from '../reducers';
 import { PreviewFile, Config, GeneratorType, RunnersAPI } from '../types/global';
 import { loginCheck, logoutDiscord, oauthDiscord } from './discord';
 import { fetchJson, postJson } from './common';
@@ -172,7 +172,24 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
   try {
     const state: RootState = yield select();
 
-    const result: boolean = yield call(confirmSaga, 'ツイートを送信します。よろしいですか？', 'info', `${action.payload}`);
+    const imageNum = state.reducer.post.media.filter((item) => item.file.type.includes('image')).length;
+    const videoNum = state.reducer.post.media.filter((item) => item.file.type.includes('video')).length;
+    const imageStr = imageNum === 0 ? '' : `画像${imageNum}ファイル`;
+    const videoStr = videoNum === 0 ? '' : `動画${videoNum}ファイル`;
+    let confirmText = imageNum > 0 || videoNum > 0 ? `以下のツイート、及び ${imageStr} ${videoStr} を送信します。よろしいですか？` : '以下のツイートを送信します。よろしいですか？';
+    let type: DialogState['type'] = 'info';
+
+    // なんかヤバそうな内容だったらテキストを追加する
+    if (action.payload.length < 20) {
+      confirmText += '極端にツイート文が短いようです。';
+      type = 'warning';
+    }
+    if (action.payload.includes('xx:xx')) {
+      confirmText += 'タイムがテンプレートのままだったりしませんか。';
+      type = 'warning';
+    }
+
+    const result: boolean = yield call(confirmSaga, confirmText, type, `${action.payload}`);
     if (!result) return;
 
     yield put(actions.updateStatus('posting'));
@@ -351,7 +368,7 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
         actions.storeMedia([
           ...orgMedia,
           {
-            file: nowMedia as PreviewFile,
+            file: { ...(nowMedia as PreviewFile), type: nowMedia.type },
             media_id_string: uploadResult.data.media_id_string,
           },
         ]),

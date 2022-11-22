@@ -111,8 +111,9 @@ const postStatusesUpdate = async (
  */
 const postMediaUpload = async (hostBase: string, file: File): Promise<SstatusesResponse<{ media_id_string: string }>> => {
   const url = `${hostBase}/media/upload`;
-  const result = await postFile(url, file, 'file');
-  return result as SstatusesResponse<{ media_id_string: string }>;
+  const result = await postFile<any>(url, file, 'file');
+  return { code: 0, data: { media_id_string: result.data.media_id_string.value } };
+  // return result as SstatusesResponse<{ media_id_string: string }>;
 };
 
 /**

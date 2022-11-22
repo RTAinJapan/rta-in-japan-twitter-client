@@ -37,6 +37,7 @@ const TweetLists: React.SFC<PropsType> = (props: PropsType) => {
     props.changeMediaIndex(index);
   };
 
+  /** ツイート一覧における画像、動画のプレビューモーダル */
   const createModal = () => {
     if (!props.preview.isShow || props.preview.media.length < 1) return <></>;
 

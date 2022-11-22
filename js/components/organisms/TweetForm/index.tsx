@@ -393,7 +393,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
       <Modal open={showPreview} modalClose={handleClosePreview}>
         <div style={{ maxHeight: '90vh', width: '90vw' }} onClick={handleClosePreview}>
           {props.mediaList[previewMediaIndex] &&
-            (props.mediaList[previewMediaIndex].file.type === 'video' ? (
+            (props.mediaList[previewMediaIndex].file.type.includes('video') ? (
               <video className={classes.media} muted controls src={props.mediaList[previewMediaIndex].file.preview}></video>
             ) : (
               <img className={classes.media} src={props.mediaList[previewMediaIndex].file.preview} />
