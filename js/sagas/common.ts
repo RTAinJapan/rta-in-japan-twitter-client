@@ -1,5 +1,4 @@
 import fetchJsonpLib from 'fetch-jsonp';
-import complementaryColors from 'complementary-colors';
 import { Color } from './Color';
 
 /**
