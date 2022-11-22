@@ -33,6 +33,7 @@ const useStyles = (theme: Theme) =>
       minWidth: 400,
     },
     mediaThumb: {
+      maxHeight: '15vh',
       height: 150,
       width: 'inherit',
       objectFit: 'cover',
@@ -218,7 +219,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                   label="ツイート内容"
                   multiline={true}
                   minRows={4}
-                  maxRows={8}
+                  maxRows={10}
                   value={tweet}
                   onChange={handleChange}
                   onPaste={handleTextOnPaste}
@@ -296,7 +297,8 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
           )}
         </Dropzone>
         <Divider className={classes.divider} />
-        {/* プレビュー */}
+
+        {/* メディアプレビュー */}
         <div style={{ display: 'flex' }}>
           {props.mediaList.map((item, index, array) => (
             <div key={`${array.length}_${index}`} style={{ width: '100%', margin: 2 }}>

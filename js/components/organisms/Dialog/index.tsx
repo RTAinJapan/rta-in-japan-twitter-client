@@ -34,6 +34,7 @@ const useStyles = (theme: Theme) =>
     control: {
       marginTop: 10,
       float: 'right',
+      display: 'flex',
     },
     button: {
       margin: 5,
@@ -77,17 +78,20 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
     if (isConfirm) {
       return (
         <>
-          <Button
-            className={classes.button}
-            variant={'contained'}
-            onClick={props.clickNo}
-            style={{ backgroundColor: compColor(props.theme.palette.background.paper), color: compColor(props.theme.palette.text.primary) }}
-          >
-            {label.no}
-          </Button>
-          <Button className={classes.button} variant={'contained'} color={'primary'} onClick={props.clickYes}>
-            {label.yes}
-          </Button>
+          <div className={classes.button}>
+            <Button
+              variant={'contained'}
+              onClick={props.clickNo}
+              style={{ backgroundColor: compColor(props.theme.palette.background.paper), color: compColor(props.theme.palette.text.primary) }}
+            >
+              {label.no}
+            </Button>
+          </div>
+          <div className={classes.button}>
+            <Button variant={'contained'} color={'primary'} onClick={props.clickYes}>
+              {label.yes}
+            </Button>
+          </div>
         </>
       );
     } else {
@@ -106,8 +110,8 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
         <ThemeProvider theme={theme}>
           <TextField
             style={{ backgroundColor: backgroundColor }}
-            maxRows={10}
-            rows={5}
+            // rows={8} 未指定なら自動
+            minRows={3}
             variant={'filled'}
             multiline={true}
             defaultValue={detail}
