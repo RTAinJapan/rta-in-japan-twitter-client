@@ -176,7 +176,7 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
     const videoNum = state.reducer.post.media.filter((item) => item.file.type.includes('video')).length;
     const imageStr = imageNum === 0 ? '' : `画像${imageNum}ファイル`;
     const videoStr = videoNum === 0 ? '' : `動画${videoNum}ファイル`;
-    let confirmText = imageNum > 0 || videoNum > 0 ? `以下のツイート、及び ${imageStr} ${videoStr} を送信します。よろしいですか？` : '以下のツイートを送信します。よろしいですか？';
+    let confirmText = imageNum > 0 || videoNum > 0 ? `以下のツイート、及び ${imageStr} ${videoStr} を送信します。` : '以下のツイートを送信します。';
     let type: DialogState['type'] = 'info';
 
     // なんかヤバそうな内容だったらテキストを追加する
@@ -188,6 +188,11 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
       confirmText += 'タイムがテンプレートのままだったりしませんか。';
       type = 'warning';
     }
+    if (action.payload.includes('『』')) {
+      confirmText += 'ゲーム名の入力を忘れてませんか。';
+      type = 'warning';
+    }
+    confirmText += 'よろしいですか？';
 
     const result: boolean = yield call(confirmSaga, confirmText, type, `${action.payload}`);
     if (!result) return;

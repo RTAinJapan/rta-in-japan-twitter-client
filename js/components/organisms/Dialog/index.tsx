@@ -100,10 +100,20 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
   };
 
   const detailArea = (detail: string) => {
+    const backgroundColor = props.theme.palette?.background.default ?? 'initial';
     if (detail) {
       return (
         <ThemeProvider theme={theme}>
-          <TextField maxRows={10} rows={5} variant={'filled'} multiline={true} defaultValue={detail} InputProps={{ readOnly: true }} fullWidth={true} />
+          <TextField
+            style={{ backgroundColor: backgroundColor }}
+            maxRows={10}
+            rows={5}
+            variant={'filled'}
+            multiline={true}
+            defaultValue={detail}
+            InputProps={{ readOnly: true }}
+            fullWidth={true}
+          />
         </ThemeProvider>
       );
     } else {
