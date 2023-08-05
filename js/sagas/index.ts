@@ -236,7 +236,7 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
       if (state.reducer.config.api.webhook) {
         const actionUsername = state.reducer.discord.username;
         const postId = postResult.data[0].id;
-        const username = postResult.data[0].user.username;
+        const username = postResult.data[0].username;
         const url = `https://twitter.com/${username}/status/${postId}`;
         const body = {
           content: `${actionUsername} がツイートを実行\n\n ${action.payload} \n\nツイートURL: ${url}`,
@@ -279,7 +279,7 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
       yield put(actions.updateStatus('ok'));
     } else {
       const tweetText = deleteTargetTweet[0].text;
-      const url = `https://twitter.com/${deleteTargetTweet[0].user.username}/status/${deleteTargetTweet[0].id}`;
+      const url = `https://twitter.com/${deleteTargetTweet[0].username}/status/${deleteTargetTweet[0].id}`;
       yield call(alertSaga, `このツイートを削除したい場合、以下を運営に連絡してください`, 'info', `${url}\n\n${tweetText}`);
     }
   } catch (error) {
