@@ -33,6 +33,7 @@ const useStyles = (theme: Theme) =>
       minWidth: 400,
     },
     mediaThumb: {
+      maxHeight: '15vh',
       height: 150,
       width: 'inherit',
       objectFit: 'cover',
@@ -218,7 +219,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                   label="ツイート内容"
                   multiline={true}
                   minRows={4}
-                  maxRows={8}
+                  maxRows={10}
                   value={tweet}
                   onChange={handleChange}
                   onPaste={handleTextOnPaste}
@@ -244,11 +245,11 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
               </IconButton>
             </Tooltip>
             <Tweet
-              id_str={props.replyTweet.id_str}
-              full_text={props.replyTweet.full_text}
+              id={props.replyTweet.id}
+              text={props.replyTweet.text}
               created_at={props.replyTweet.created_at}
-              display_text_range={props.replyTweet.display_text_range}
               entities={props.replyTweet.entities}
+              media={props.replyTweet.media}
               user={props.replyTweet.user}
             />
           </div>
@@ -267,10 +268,10 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
               </IconButton>
             </Tooltip>
             <Tweet
-              id_str={props.retweet.id_str}
-              full_text={props.retweet.full_text}
+              id={props.retweet.id}
+              text={props.retweet.text}
               created_at={props.retweet.created_at}
-              display_text_range={props.retweet.display_text_range}
+              media={props.retweet.media}
               entities={props.retweet.entities}
               user={props.retweet.user}
             />
@@ -296,7 +297,8 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
           )}
         </Dropzone>
         <Divider className={classes.divider} />
-        {/* プレビュー */}
+
+        {/* メディアプレビュー */}
         <div style={{ display: 'flex' }}>
           {props.mediaList.map((item, index, array) => (
             <div key={`${array.length}_${index}`} style={{ width: '100%', margin: 2 }}>
@@ -409,7 +411,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     tweetText: state.reducer.post.text,
     replyTweet: state.reducer.post.in_reply_to_status_id,
-    retweet: state.reducer.post.attachment_url,
+    retweet: state.reducer.post.attachment_tweet,
     mediaList: state.reducer.post.media,
     gameList: state.reducer.game,
     template: state.reducer.config.tweetTemplate,

@@ -1,5 +1,4 @@
 import fetchJsonpLib from 'fetch-jsonp';
-import complementaryColors from 'complementary-colors';
 import { Color } from './Color';
 
 /**
@@ -58,10 +57,10 @@ export const postJson = async <T>(url: string, body: object): Promise<T> => {
   }
 };
 
-export const postFile = async <T>(url: string, file: File): Promise<T> => {
+export const postFile = async <T>(url: string, file: File, filekey: string): Promise<T> => {
   try {
     const formData = new FormData();
-    formData.append(file.name, file);
+    formData.append(filekey, file);
 
     const result = await fetch(url, {
       method: 'POST',

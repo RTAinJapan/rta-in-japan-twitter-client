@@ -1,5 +1,5 @@
 import { fetchJson, postFile, postJson } from './common';
-import { TwitterAPI, Tweets } from '../types/api';
+import { RequestUpdate, SstatusesResponse, Statuses } from '../types/api';
 
 /**
  * Twitterのルールに則り、文字数カウントを行う
@@ -45,11 +45,11 @@ export const countStr = (baseStr: string): number => {
  * @param hostBase
  * @returns
  */
-const getStatusesUserTimeLine = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
-  const url = `${hostBase}statuses/user_timeline`;
+const getStatusesUserTimeLine = async (hostBase: string): Promise<SstatusesResponse<Statuses[]>> => {
+  const url = `${hostBase}/statuses/user_timeline`;
   console.log(`Twitterデータ取得: ${url}`);
   const result = await fetchJson(url);
-  return result as TwitterAPI<Tweets[]>;
+  return result as SstatusesResponse<Statuses[]>;
 };
 
 /**
@@ -57,11 +57,11 @@ const getStatusesUserTimeLine = async (hostBase: string): Promise<TwitterAPI<Twe
  * @param hostBase
  * @returns
  */
-const getStatusesMentionsTimeLine = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
-  const url = `${hostBase}statuses/mentions_timeline`;
+const getStatusesMentionsTimeLine = async (hostBase: string): Promise<SstatusesResponse<Statuses[]>> => {
+  const url = `${hostBase}/statuses/mentions_timeline`;
   console.log(`Twitterデータ取得: ${url}`);
   const result = await fetchJson(url);
-  return result as TwitterAPI<Tweets[]>;
+  return result as SstatusesResponse<Statuses[]>;
 };
 
 /**
@@ -69,11 +69,11 @@ const getStatusesMentionsTimeLine = async (hostBase: string): Promise<TwitterAPI
  * @param hostBase
  * @returns
  */
-const getStatusesHash = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
-  const url = `${hostBase}statuses/hash`;
+const getStatusesHash = async (hostBase: string): Promise<SstatusesResponse<Statuses[]>> => {
+  const url = `${hostBase}/statuses/hash`;
   console.log(`Twitterデータ取得: ${url}`);
   const result = await fetchJson(url);
-  return result as TwitterAPI<Tweets[]>;
+  return result as SstatusesResponse<Statuses[]>;
 };
 
 /**
@@ -89,18 +89,18 @@ const postStatusesUpdate = async (
   hostBase: string,
   text: string,
   mediaIds: string[],
-  in_reply_to_status_id: string | null,
-  attachment_url: string | null,
-): Promise<TwitterAPI<Tweets[]>> => {
-  const url = `${hostBase}statuses/update`;
-  const postObject = {
+  in_reply_to_tweet_id: string | null,
+  quote_tweet_id: string | null,
+): Promise<SstatusesResponse<Statuses[]>> => {
+  const url = `${hostBase}/statuses/update`;
+  const postObject: RequestUpdate = {
     status: text,
     media_ids: mediaIds,
-    in_reply_to_status_id: in_reply_to_status_id,
-    attachment_url: attachment_url,
+    in_reply_to_tweet_id: in_reply_to_tweet_id,
+    quote_tweet_id: quote_tweet_id,
   };
   const result = await postJson(url, postObject);
-  return result as TwitterAPI<Tweets[]>;
+  return result as SstatusesResponse<Statuses[]>;
 };
 
 /**
@@ -109,10 +109,11 @@ const postStatusesUpdate = async (
  * @param file
  * @returns
  */
-const postMediaUpload = async (hostBase: string, file: File): Promise<TwitterAPI<{ media_id_string: string }>> => {
-  const url = `${hostBase}media/upload`;
-  const result = await postFile(url, file);
-  return result as TwitterAPI<{ media_id_string: string }>;
+const postMediaUpload = async (hostBase: string, file: File): Promise<SstatusesResponse<{ media_id_string: string }>> => {
+  const url = `${hostBase}/media/upload`;
+  const result = await postFile<any>(url, file, 'file');
+  // return { code: 0, data: { media_id_string: result.data.media_id_string.value } };
+  return result as SstatusesResponse<{ media_id_string: string }>;
 };
 
 /**
@@ -121,21 +122,22 @@ const postMediaUpload = async (hostBase: string, file: File): Promise<TwitterAPI
  * @param id
  * @returns
  */
-const postStatusesDestroy = async (hostBase: string, id: string): Promise<TwitterAPI<undefined>> => {
-  const url = `${hostBase}statuses/destroy/${id}`;
+const postStatusesDestroy = async (hostBase: string, id: string): Promise<SstatusesResponse<undefined>> => {
+  const url = `${hostBase}/statuses/destroy/${id}`;
   const result = await postJson(url, {});
-  return result as TwitterAPI<undefined>;
+  return result as SstatusesResponse<undefined>;
 };
 
-export const tweetToUrl = (tweet: Tweets): string => {
-  const url = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`;
+export const tweetToUrl = (tweet: Statuses): string => {
+  const url = `https://twitter.com/${tweet.user.username}/status/${tweet.id}`;
 
   return url;
 };
 
-export const tweetToReplyUrl = (tweet: Tweets): string => {
-  if (tweet.in_reply_to_screen_name) {
-    return `https://twitter.com/${tweet.in_reply_to_screen_name}/status/${tweet.in_reply_to_status_id_str}`;
+export const tweetToReplyUrl = (tweet: Statuses): string => {
+  const { in_reply_to_status } = tweet;
+  if (in_reply_to_status) {
+    return `https://twitter.com/${in_reply_to_status.user.username}/status/${in_reply_to_status.id}`;
   } else {
     return '';
   }
@@ -146,29 +148,32 @@ export const tweetToReplyUrl = (tweet: Tweets): string => {
  * @param tweet
  * @returns
  */
-export const tweetTextUrlReplace = (tweet: Tweets): string => {
-  let text = tweet.full_text;
+export const tweetTextUrlReplace = (tweet: Statuses): string => {
+  let text = tweet.text;
   try {
-    if (tweet.display_text_range && tweet.display_text_range.length == 2) {
-      text = text.slice(tweet.display_text_range[0], tweet.display_text_range[1]);
-    }
-
-    // 謎の短縮URLを展開表示する
     if (tweet.entities) {
+      // 先頭のメンション部分を削る
+      // なんか無くなったっぽい？
+      // if (tweet.entities.mentions.length > 0) {
+      //   text = text.slice(tweet.entities.mentions[tweet.entities.mentions.length - 1].end);
+      // }
+
+      // 謎の短縮URLを展開表示する
       for (const urlinfo of tweet.entities.urls) {
         const replaceTarget = urlinfo.url;
-        const replaceUrl = urlinfo.expanded_url;
+        // メディアなら消す。それ以外なら展開
+        const replaceUrl = urlinfo.media_key ? '' : urlinfo.expanded_url;
         text = text.replace(replaceTarget, replaceUrl);
       }
     }
 
     // なぜかくっついてくる画像・動画の短縮URLを削除する
-    if (tweet.extended_entities && tweet.extended_entities.media) {
-      const mediaList = tweet.extended_entities.media;
-      for (const media of mediaList) {
-        text = text.replace(media.url, '');
-      }
-    }
+    // if (tweet.media) {
+    //   const mediaList = tweet.media;
+    //   for (const media of mediaList) {
+    //     text = text.replace(media.url, '');
+    //   }
+    // }
   } catch (e) {
     // 何かあったらしい
   }

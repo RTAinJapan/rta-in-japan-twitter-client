@@ -74,8 +74,8 @@ const config: Configuration = {
     minimizer: [
       new TerserPlugin({
         terserOptions: {
-          ecma: 6,
-          warnings: false,
+          ecma: 5,
+          // warnings: false,
           parse: {},
           compress: {},
           mangle: true,
@@ -106,7 +106,7 @@ const config: Configuration = {
     ]),
     new WorkboxWebpackPlugin.GenerateSW({
       maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
-      exclude: ['config\.json.*'], // キャッシュ対象から除外
+      exclude: ['config.json.*'], // キャッシュ対象から除外
     }),
   ],
 };

@@ -6,10 +6,10 @@ import Component, { ComponentProps } from '.';
 import { ArrayItem } from '../../../types/global';
 
 const tweet: ArrayItem<ComponentProps['tweets']> = {
-  id_str: '0123456789012345678901234567890123456789',
+  id: '0123456789012345678901234567890123456789',
   text: 'あいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこ\nあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこ',
   user: {
-    id_str: '123456',
+    id: '123456',
     name: 'RTA走り太郎',
     screen_name: 'rta_runner',
     profile_image_url_https: 'images/rtainjapan-icon.png',

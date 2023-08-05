@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 import * as actions from '../actions';
 import { PreviewFile, Config } from '../types/global';
-import { Tweets, Game, Media } from '../types/api';
+import { Statuses, Game, Media } from '../types/api';
 import customTheme from '../theme';
 import { Theme } from '@mui/material';
 type Action = ActionType<typeof actions>;
@@ -43,11 +43,11 @@ export type GlobalState = {
   /** ツイート一覧 */
   twitterTimeline: {
     /** 自分の結果 */
-    user: Tweets[];
+    user: Statuses[];
     /** メンションの結果 */
-    mention: Tweets[];
+    mention: Statuses[];
     /** ハッシュタグで検索した結果 */
-    hash: Tweets[];
+    hash: Statuses[];
   };
   /** プレビュー */
   mediaPreview: {
@@ -63,9 +63,9 @@ export type GlobalState = {
       file: PreviewFile;
     }[];
     /** 返信先のツイートID */
-    in_reply_to_status_id: Tweets | null;
-    /** 引用RTで引用するURL */
-    attachment_url: Tweets | null;
+    in_reply_to_status_id: Statuses | null;
+    /** 引用RTで引用するツイート */
+    attachment_tweet: Statuses | null;
   };
   /** ゲーム情報 */
   game: Game[];
@@ -116,18 +116,20 @@ const initial: GlobalState = {
     text: '',
     media: [],
     in_reply_to_status_id: null,
-    attachment_url: null,
+    attachment_tweet: null,
   },
   game: [],
   config: {
     api: {
       twitterBase: '',
       runner: '',
+      webhook: '',
     },
     twitter: {
       isAllowDeleteTweet: false,
     },
     discord: {
+      enable: true,
       config: {
         baseUrl: '',
         clientId: '',
@@ -139,12 +141,8 @@ const initial: GlobalState = {
       roles: [],
       users: [],
     },
-    tweetTemplate: {
-      withCommentary: [],
-      withOutCommentary: [],
-      common: [],
-      footer: '',
-    },
+    tweetTemplate: [],
+    tweetFooter: '',
     link: [],
   },
   theme: {
@@ -219,7 +217,7 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
         ...state,
         post: {
           ...state.post,
-          attachment_url: action.payload,
+          attachment_tweet: action.payload,
         },
       };
     }
@@ -228,7 +226,7 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
         ...state,
         post: {
           ...state.post,
-          attachment_url: null,
+          attachment_tweet: null,
         },
       };
     }

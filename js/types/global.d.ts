@@ -11,7 +11,18 @@ export type ResolvedType<T> = T extends Promise<infer R> ? R : T;
 export type GeneratorType<T extends (...args: any) => any> = ResolvedType<ReturnType<T>>;
 
 export type PreviewFile = File & {
-  preview: any;
+  /** アップロード元のファイルパス */
+  path: string;
+  /**
+   * プレビュー用のblob URL
+   * @example "blob:http://localhost:8080/94ec5c08-b859-4e01-9f85-f37b99ba2e9c"
+   */
+  preview: string;
+  /**
+   * ファイルタイプ
+   * @example "video/mp4"
+   */
+  type: string;
 };
 
 export type RunnersAPI = { status: string; version: string; data: Game[] };
@@ -32,6 +43,7 @@ export type Config = {
   };
   /** Discordの設定 */
   discord: {
+    enable: boolean;
     config: {
       baseUrl: string;
       clientId: string;

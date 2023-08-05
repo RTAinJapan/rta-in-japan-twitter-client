@@ -93,6 +93,13 @@ export function* loginCheck() {
   try {
     const state: RootState = yield select();
     const config = state.reducer.config;
+
+    if (!config.discord.enable) {
+      console.warn('認証スキップ');
+      yield put(actions.storeDiscordUserName('テストユーザ'));
+      return;
+    }
+
     yield put(actions.updateStatus('initialzing'));
 
     let token = localStorage.getItem('discordToken');
