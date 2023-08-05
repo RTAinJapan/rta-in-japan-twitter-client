@@ -11,7 +11,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import { Statuses } from '../../../types/api';
 import moment from 'moment';
 import * as actions from '../../../actions';
-import { tweetTextUrlReplace, tweetToReplyUrl, tweetToUrl } from '../../../sagas/twitterUtil';
+import { tweetTextUrlReplace, tweetToUrl } from '../../../sagas/twitterUtil';
 import { Divider } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { connect } from 'react-redux';
@@ -67,53 +67,53 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
   };
 
   /** 返信ツイートを外部で開く */
-  const handleReplyLinkButton = (tweet: Statuses) => () => {
-    const url = tweetToReplyUrl(tweet);
-    window.open(url);
-  };
+  // const handleReplyLinkButton = (tweet: Statuses) => () => {
+  //   const url = tweetToReplyUrl(tweet);
+  //   window.open(url);
+  // };
 
   /** サムネをクリックしたら最大化して表示 */
-  const handleShowMedia = (index: number) => () => {
-    const media = props.media ? props.media : null;
-    if (!media) return;
-    props.showMedia({
-      media: media,
-      index,
-    });
-  };
+  // const handleShowMedia = (index: number) => () => {
+  //   const media = props.media ? props.media : null;
+  //   if (!media) return;
+  //   props.showMedia({
+  //     media: media,
+  //     index,
+  //   });
+  // };
 
-  const createThumb = (media: Statuses['media'] | null) => {
-    if (media) {
-      return (
-        <div>
-          {media.map((med, index) => {
-            const url = med.url ? med.url : med.preview_image_url;
-            return (
-              // なんかkeyがユニークにならない
-              <div key={`${url}_${Math.random()}`} onClick={handleShowMedia(index)}>
-                <img style={{ height: 80, objectFit: 'fill', maxWidth: '100%' }} src={`${url}:small`} />
-              </div>
-            );
-          })}
-        </div>
-      );
-    } else {
-      return <div />;
-    }
-  };
+  // const createThumb = (media: Statuses['media'] | null) => {
+  //   if (media) {
+  //     return (
+  //       <div>
+  //         {media.map((med, index) => {
+  //           const url = med.url ? med.url : med.preview_image_url;
+  //           return (
+  //             // なんかkeyがユニークにならない
+  //             <div key={`${url}_${Math.random()}`} onClick={handleShowMedia(index)}>
+  //               <img style={{ height: 80, objectFit: 'fill', maxWidth: '100%' }} src={`${url}:small`} />
+  //             </div>
+  //           );
+  //         })}
+  //       </div>
+  //     );
+  //   } else {
+  //     return <div />;
+  //   }
+  // };
 
   return (
     <Paper className={classes.root}>
-      <Avatar src={props.user.profile_image_url} />
+      {/* <Avatar src={props.user.profile_image_url} /> */}
       <div style={{ marginLeft: 5, width: '100%' }}>
         {/* ユーザー名、投稿時刻 */}
         <div>
-          <Typography style={{ fontWeight: 'bold', fontSize: 'small' }} variant={'subtitle1'}>
+          {/* <Typography style={{ fontWeight: 'bold', fontSize: 'small' }} variant={'subtitle1'}>
             {props.user.name}
-          </Typography>
+          </Typography> */}
           <span className={classes.screenName}>
             <Typography style={{ fontSize: 'xx-small' }} variant={'caption'}>
-              @{props.user.username}
+              @{props.username}
             </Typography>
           </span>
           <span className={classes.date}>
@@ -161,14 +161,14 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
         </div>
 
         {/* サムネ */}
-        {props.deleteTweet && props.media ? <Divider /> : ''}
-        {props.deleteTweet && props.media ? <div>{createThumb(props.media)}</div> : ''}
+        {/* {props.deleteTweet && props.media ? <Divider /> : ''}
+        {props.deleteTweet && props.media ? <div>{createThumb(props.media)}</div> : ''} */}
 
         {/* 返信先or引用RT */}
-        {props.deleteTweet && props.in_reply_to_status ? <Divider /> : ''}
+        {/* {props.deleteTweet && props.in_reply_to_status ? <Divider /> : ''} */}
 
         {/* 返信先 */}
-        {props.deleteTweet && props.in_reply_to_status ? (
+        {/* {props.deleteTweet && props.in_reply_to_status ? (
           <div>
             <Typography variant={'caption'}>返信</Typography>
             <Tooltip title={'返信先を開く'}>
@@ -181,12 +181,12 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
           </div>
         ) : (
           ''
-        )}
+        )} */}
 
         {/* 返信先or引用RT */}
-        {props.deleteTweet && props.quoted_status ? <Divider /> : ''}
+        {/* {props.deleteTweet && props.quoted_status ? <Divider /> : ''} */}
 
-        {props.deleteTweet && props.quoted_status ? (
+        {/* {props.deleteTweet && props.quoted_status ? (
           <div>
             <Typography variant={'caption'}>引用</Typography>
             <Tooltip title={'引用先を開く'}>
@@ -199,7 +199,7 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
           </div>
         ) : (
           ''
-        )}
+        )} */}
       </div>
     </Paper>
   );

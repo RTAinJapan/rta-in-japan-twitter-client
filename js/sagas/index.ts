@@ -26,6 +26,7 @@ export default function* rootSaga() {
   yield takeEvery(actions.logoutDiscord, logoutDiscord);
 
   yield call(loginCheck);
+  // yield put(actions.storeDiscordUserName('テストユーザ'));
 
   // ツイート情報
   yield call(fetchTweetListAndApplyState);
@@ -98,27 +99,27 @@ function* fetchTweetListAndApplyState() {
 
     let error: any = null;
 
-    let tweet: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
+    const tweet: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
     if (tweet.code === 0) {
       yield put(actions.updateTweetList(tweet.data, 'user'));
     } else {
       error = tweet.error;
     }
 
-    tweet = yield call(twitterApi.getStatusesMentionsTimeLine, state.reducer.config.api.twitterBase);
-    if (tweet.code === 0) {
-      yield put(actions.updateTweetList(tweet.data, 'mention'));
-    } else {
-      error = tweet.error;
-    }
+    // tweet = yield call(twitterApi.getStatusesMentionsTimeLine, state.reducer.config.api.twitterBase);
+    // if (tweet.code === 0) {
+    //   yield put(actions.updateTweetList(tweet.data, 'mention'));
+    // } else {
+    //   error = tweet.error;
+    // }
 
-    tweet = yield call(twitterApi.getStatusesHash, state.reducer.config.api.twitterBase);
-    if (tweet.code === 0) {
-      yield put(actions.updateTweetList(tweet.data, 'hash'));
-    } else {
-      error = tweet.error;
-    }
-    if (error) throw error;
+    // tweet = yield call(twitterApi.getStatusesHash, state.reducer.config.api.twitterBase);
+    // if (tweet.code === 0) {
+    //   yield put(actions.updateTweetList(tweet.data, 'hash'));
+    // } else {
+    //   error = tweet.error;
+    // }
+    // if (error) throw error;
 
     yield put(actions.changeNotify(true, 'info', 'ツイート取得完了'));
   } catch (error) {

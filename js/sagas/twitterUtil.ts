@@ -129,19 +129,19 @@ const postStatusesDestroy = async (hostBase: string, id: string): Promise<Sstatu
 };
 
 export const tweetToUrl = (tweet: Statuses): string => {
-  const url = `https://twitter.com/${tweet.user.username}/status/${tweet.id}`;
+  const url = `https://twitter.com/${tweet.username}/status/${tweet.id}`;
 
   return url;
 };
 
-export const tweetToReplyUrl = (tweet: Statuses): string => {
-  const { in_reply_to_status } = tweet;
-  if (in_reply_to_status) {
-    return `https://twitter.com/${in_reply_to_status.user.username}/status/${in_reply_to_status.id}`;
-  } else {
-    return '';
-  }
-};
+// export const tweetToReplyUrl = (tweet: Statuses): string => {
+//   const { in_reply_to_status } = tweet;
+//   if (in_reply_to_status) {
+//     return `https://twitter.com/${in_reply_to_status.user.username}/status/${in_reply_to_status.id}`;
+//   } else {
+//     return '';
+//   }
+// };
 
 /**
  * ツイートのオブジェクトから、本文をいい感じに整形して出力する
@@ -149,24 +149,22 @@ export const tweetToReplyUrl = (tweet: Statuses): string => {
  * @returns
  */
 export const tweetTextUrlReplace = (tweet: Statuses): string => {
-  let text = tweet.text;
+  const text = tweet.text;
   try {
-    if (tweet.entities) {
-      // 先頭のメンション部分を削る
-      // なんか無くなったっぽい？
-      // if (tweet.entities.mentions.length > 0) {
-      //   text = text.slice(tweet.entities.mentions[tweet.entities.mentions.length - 1].end);
-      // }
-
-      // 謎の短縮URLを展開表示する
-      for (const urlinfo of tweet.entities.urls) {
-        const replaceTarget = urlinfo.url;
-        // メディアなら消す。それ以外なら展開
-        const replaceUrl = urlinfo.media_key ? '' : urlinfo.expanded_url;
-        text = text.replace(replaceTarget, replaceUrl);
-      }
-    }
-
+    // if (tweet.entities) {
+    //   // 先頭のメンション部分を削る
+    //   // なんか無くなったっぽい？
+    //   // if (tweet.entities.mentions.length > 0) {
+    //   //   text = text.slice(tweet.entities.mentions[tweet.entities.mentions.length - 1].end);
+    //   // }
+    //   // 謎の短縮URLを展開表示する
+    //   for (const urlinfo of tweet.entities.urls) {
+    //     const replaceTarget = urlinfo.url;
+    //     // メディアなら消す。それ以外なら展開
+    //     const replaceUrl = urlinfo.media_key ? '' : urlinfo.expanded_url;
+    //     text = text.replace(replaceTarget, replaceUrl);
+    //   }
+    // }
     // なぜかくっついてくる画像・動画の短縮URLを削除する
     // if (tweet.media) {
     //   const mediaList = tweet.media;

@@ -29,31 +29,23 @@ type PropsType = ComponentProps & ActionProps;
 const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
   const classes = useStyles(props.theme.theme);
 
-  const tabs = [
-    {
-      label: '運営ツイート',
-    },
-    {
-      label: '返信',
-    },
-    {
-      label: 'ハッシュタグ',
-    },
-  ];
+  // const tabs = [
+  //   {
+  //     label: '運営ツイート',
+  //   },
+  //   {
+  //     label: '返信',
+  //   },
+  //   {
+  //     label: 'ハッシュタグ',
+  //   },
+  // ];
 
   return (
     <div className={classes.root}>
-      <NavTabs tabs={tabs} style={{ top: 73 }}>
-        <div style={{ height: '100%' }}>
-          <TweetList tweets={props.list.user} deleteTweet={props.deleteTweet} replyTweet={props.replyTweet} retweet={props.retweet} />
-        </div>
-        <div style={{ height: '100%' }}>
-          <TweetList tweets={props.list.mention} />
-        </div>
-        <div style={{ height: '100%' }}>
-          <TweetList tweets={props.list.hash} />
-        </div>
-      </NavTabs>
+      <div style={{ height: '100%' }}>
+        <TweetList tweets={props.list.user} deleteTweet={props.deleteTweet} replyTweet={props.replyTweet} retweet={props.retweet} />
+      </div>
       <Fab className={classes.reloadButton} style={{ position: 'absolute' }} color={'primary'} onClick={() => props.reloadTweet()}>
         <RefreshIcon />
       </Fab>
