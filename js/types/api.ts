@@ -11,27 +11,28 @@ export type Statuses = {
   id: string;
   /** 本文 */
   text: string;
-  /** ユーザ情報 */
-  user: User;
+  // /** ユーザ情報 */
+  username: string;
+  // user: User;
   /** 投稿日時 */
   created_at: string;
-  /** ハッシュとかいろいろ */
-  entities?: StatusesEntities;
-  /** 画像とか動画 */
-  media?: Media[];
-  /** 返信先のツイートID */
-  in_reply_to_status?: Statuses;
-  /** 引用RTの内容 */
-  quoted_status?: Statuses;
+  // /** ハッシュとかいろいろ */
+  // entities?: StatusesEntities;
+  // /** 画像とか動画 */
+  // media?: Media[];
+  // /** 返信先のツイートID */
+  // in_reply_to_status?: Statuses;
+  // /** 引用RTの内容 */
+  // quoted_status?: Statuses;
 };
 
-export type User = {
-  created_at: string;
-  id: string;
-  name: string;
-  username: string;
-  profile_image_url: string;
-};
+// export type User = {
+//   created_at: string;
+//   id: string;
+//   name: string;
+//   username: string;
+//   profile_image_url: string;
+// };
 
 export type StatusesEntities = {
   annotations: [];

@@ -16,7 +16,7 @@ const useStyles = (theme: Theme) =>
       position: 'relative',
     },
     column: {
-      width: 'calc(100vw / 3 - 50px)',
+      width: '100%', //'calc(100vw / 3 - 50px)',
       marginLeft: 5,
       marginRight: 5,
     },
@@ -40,12 +40,12 @@ const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
   return (
     <div className={classes.root}>
       <div className={classes.column}>
-        <Typography variant={'h6'}>運営ツイート</Typography>
+        {/* <Typography variant={'h6'}>運営ツイート</Typography> */}
         <div className={classes.tweetColumn}>
           <TweetList tweets={props.list.user} deleteTweet={props.deleteTweet} replyTweet={props.replyTweet} retweet={props.retweet} />
         </div>
       </div>
-      <div className={classes.column}>
+      {/* <div className={classes.column}>
         <Typography variant={'h6'}>返信</Typography>
         <div className={classes.tweetColumn}>
           <TweetList tweets={props.list.mention} />
@@ -56,7 +56,7 @@ const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
         <div className={classes.tweetColumn}>
           <TweetList tweets={props.list.hash} />
         </div>
-      </div>
+      </div> */}
       <div style={{ height: '100%' }}>
         <Fab className={classes.reloadButton} style={{ position: 'absolute', bottom: 10, right: 35 }} color={'primary'} onClick={() => props.reloadTweet()}>
           <RefreshIcon />

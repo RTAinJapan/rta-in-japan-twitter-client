@@ -24,6 +24,7 @@ const commonConfig: Partial<Configuration> = {
 const devServerConfig: webpackDevServer.Configuration = {
   contentBase: 'docs',
   host: 'localhost',
+  port: 3000,
   open: true,
   hot: true,
 };

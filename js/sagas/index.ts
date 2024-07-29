@@ -26,6 +26,7 @@ export default function* rootSaga() {
   yield takeEvery(actions.logoutDiscord, logoutDiscord);
 
   yield call(loginCheck);
+  // yield put(actions.storeDiscordUserName('テストユーザ'));
 
   // ツイート情報
   yield call(fetchTweetListAndApplyState);
@@ -98,27 +99,27 @@ function* fetchTweetListAndApplyState() {
 
     let error: any = null;
 
-    let tweet: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
+    const tweet: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
     if (tweet.code === 0) {
       yield put(actions.updateTweetList(tweet.data, 'user'));
     } else {
       error = tweet.error;
     }
 
-    tweet = yield call(twitterApi.getStatusesMentionsTimeLine, state.reducer.config.api.twitterBase);
-    if (tweet.code === 0) {
-      yield put(actions.updateTweetList(tweet.data, 'mention'));
-    } else {
-      error = tweet.error;
-    }
+    // tweet = yield call(twitterApi.getStatusesMentionsTimeLine, state.reducer.config.api.twitterBase);
+    // if (tweet.code === 0) {
+    //   yield put(actions.updateTweetList(tweet.data, 'mention'));
+    // } else {
+    //   error = tweet.error;
+    // }
 
-    tweet = yield call(twitterApi.getStatusesHash, state.reducer.config.api.twitterBase);
-    if (tweet.code === 0) {
-      yield put(actions.updateTweetList(tweet.data, 'hash'));
-    } else {
-      error = tweet.error;
-    }
-    if (error) throw error;
+    // tweet = yield call(twitterApi.getStatusesHash, state.reducer.config.api.twitterBase);
+    // if (tweet.code === 0) {
+    //   yield put(actions.updateTweetList(tweet.data, 'hash'));
+    // } else {
+    //   error = tweet.error;
+    // }
+    // if (error) throw error;
 
     yield put(actions.changeNotify(true, 'info', 'ツイート取得完了'));
   } catch (error) {
@@ -235,7 +236,7 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
       if (state.reducer.config.api.webhook) {
         const actionUsername = state.reducer.discord.username;
         const postId = postResult.data[0].id;
-        const username = postResult.data[0].user.username;
+        const username = postResult.data[0].username;
         const url = `https://twitter.com/${username}/status/${postId}`;
         const body = {
           content: `${actionUsername} がツイートを実行\n\n ${action.payload} \n\nツイートURL: ${url}`,
@@ -278,7 +279,7 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
       yield put(actions.updateStatus('ok'));
     } else {
       const tweetText = deleteTargetTweet[0].text;
-      const url = `https://twitter.com/${deleteTargetTweet[0].user.username}/status/${deleteTargetTweet[0].id}`;
+      const url = `https://twitter.com/${deleteTargetTweet[0].username}/status/${deleteTargetTweet[0].id}`;
       yield call(alertSaga, `このツイートを削除したい場合、以下を運営に連絡してください`, 'info', `${url}\n\n${tweetText}`);
     }
   } catch (error) {

@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "target": "ES5",
     "allowJs": true,
     "jsx": "react",
@@ -14,9 +16,17 @@
     "noImplicitAny": false,
     "importHelpers": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
   },
-  "include": ["js/**/*", "webpack.config.ts"],
-  "exclude": ["node_modules", "build", "acceptance-tests", "webpack", "jest"]
+  "include": [
+    "js/**/*",
+    "webpack.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+    "acceptance-tests",
+    "webpack",
+    "jest"
+  ]
 }
