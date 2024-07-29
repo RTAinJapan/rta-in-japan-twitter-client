@@ -156,6 +156,25 @@ function* fetchGameListAndApplyState() {
     if (result.status !== 'ok') {
       throw new Error('走者情報の取得に失敗');
     }
+
+    // 走者名に@が含まれている場合はメンションにならないようにスペースを入れる
+    result.data = result.data.map(item => {
+      const data = item;
+      data.runner = data.runner.map(runner => {
+        return {
+          ...runner,
+          username: runner.username.replace(/(?<=^|[^a-zA-Z0-9_!#$%&*@＠]|(?:^|[^a-zA-Z0-9_+~.-])(?:rt|RT|rT|Rt):?)([@＠])(?=\w)/g, "$1 ")
+        }
+      });
+      data.commentary = data.commentary.map(commentary => {
+        return {
+          ...commentary,
+          username: commentary.username.replace(/(?<=^|[^a-zA-Z0-9_!#$%&*@＠]|(?:^|[^a-zA-Z0-9_+~.-])(?:rt|RT|rT|Rt):?)([@＠])(?=\w)/g, "$1 ")
+        }
+      });
+      return data;
+    });
+
     localStorage.setItem('runners', JSON.stringify(result));
     yield put(actions.updateGameList(result.data));
 
