@@ -393,7 +393,7 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
         actions.storeMedia([
           ...orgMedia,
           {
-            file: { ...(nowMedia as PreviewFile), type: nowMedia.type },
+            file: { ...(nowMedia as PreviewFile), type: nowMedia.type } as PreviewFile,
             media_id_string: uploadResult.data.media_id_string,
           },
         ]),
