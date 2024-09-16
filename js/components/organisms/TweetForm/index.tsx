@@ -384,7 +384,13 @@ const TweetForm: React.FC<PropsType> = (props: PropsType) => {
                   disabled={true}
                 />
                 <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                  <Button variant={'contained'} size={'small'} color={'primary'} onClick={handleTemplateApply(template.contents)} disabled={Number.isNaN(templateGameIndex)}>
+                  <Button
+                    variant={'contained'}
+                    size={'small'}
+                    color={'primary'}
+                    onClick={handleTemplateApply(template.contents)}
+                    disabled={templateGameIndex === '' || Number.isNaN(templateGameIndex)}
+                  >
                     反映
                   </Button>
                 </div>
