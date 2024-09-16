@@ -11,7 +11,8 @@
       "extensions": [
         "EditorConfig.EditorConfig",
         "dbaeumer.vscode-eslint",
-        "stylelint.vscode-stylelint"
+        "stylelint.vscode-stylelint",
+        "ms-azuretools.vscode-docker"
       ]
     }
   },
