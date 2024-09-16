@@ -1,0 +1,10 @@
+{
+	"extends": [
+		"config:base",
+		":prHourlyLimitNone",
+		":prConcurrentLimitNone",
+		":semanticCommits"
+	],
+	"rangeStrategy": "update-lockfile",
+	"postUpdateOptions": ["npmDedupe", "yarnDedupeHighest"]
+}
