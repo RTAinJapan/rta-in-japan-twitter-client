@@ -1,0 +1,24 @@
+{
+  "name": "docker-playground - node",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "rijtwi",
+  "workspaceFolder": "/workspace",
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "EditorConfig.EditorConfig",
+        "dbaeumer.vscode-eslint",
+        "stylelint.vscode-stylelint"
+      ]
+    }
+  },
+  // node_modulesをボリューム内のみに保存
+  "mounts": [
+    "source=try-node-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+  ],
+  "postCreateCommand": "sudo chown vscode node_modules",
+  "remoteUser": "vscode"
+}

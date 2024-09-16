@@ -28,7 +28,7 @@ type ActionProps = {
 
 type PropsType = ComponentProps & ActionProps;
 
-const Modal: React.SFC<PropsType> = (props) => {
+const Modal: React.FC<PropsType> = (props) => {
   const classes = useStyles();
   const handleClose = () => {
     if (props.modalClose) props.modalClose();

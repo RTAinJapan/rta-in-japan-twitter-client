@@ -1,0 +1,11 @@
+version: '3'
+services:
+  rijtwi:
+    build: .
+    restart: always
+    working_dir: '/workspace'
+    tty: true
+    volumes:
+      - type: bind
+        source: ../
+        target: /workspace

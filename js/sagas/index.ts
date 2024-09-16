@@ -28,10 +28,10 @@ export default function* rootSaga() {
   yield call(loginCheck);
   // yield put(actions.storeDiscordUserName('テストユーザ'));
 
-  // ツイート情報
-  yield call(fetchTweetListAndApplyState);
   // ゲーム情報
   yield call(fetchGameListAndApplyState);
+  // ツイート情報
+  yield call(fetchTweetListAndApplyState);
 }
 
 function* errorHandler(error: any) {
@@ -106,21 +106,6 @@ function* fetchTweetListAndApplyState() {
       error = tweet.error;
     }
 
-    // tweet = yield call(twitterApi.getStatusesMentionsTimeLine, state.reducer.config.api.twitterBase);
-    // if (tweet.code === 0) {
-    //   yield put(actions.updateTweetList(tweet.data, 'mention'));
-    // } else {
-    //   error = tweet.error;
-    // }
-
-    // tweet = yield call(twitterApi.getStatusesHash, state.reducer.config.api.twitterBase);
-    // if (tweet.code === 0) {
-    //   yield put(actions.updateTweetList(tweet.data, 'hash'));
-    // } else {
-    //   error = tweet.error;
-    // }
-    // if (error) throw error;
-
     yield put(actions.changeNotify(true, 'info', 'ツイート取得完了'));
   } catch (error) {
     yield call(errorHandler, error);
@@ -158,19 +143,19 @@ function* fetchGameListAndApplyState() {
     }
 
     // 走者名に@が含まれている場合はメンションにならないようにスペースを入れる
-    result.data = result.data.map(item => {
+    result.data = result.data.map((item) => {
       const data = item;
-      data.runner = data.runner.map(runner => {
+      data.runner = data.runner.map((runner) => {
         return {
           ...runner,
-          username: runner.username.replace(/(?<=^|[^a-zA-Z0-9_!#$%&*@＠]|(?:^|[^a-zA-Z0-9_+~.-])(?:rt|RT|rT|Rt):?)([@＠])(?=\w)/g, "$1 ")
-        }
+          username: runner.username.replace(/(?<=^|[^a-zA-Z0-9_!#$%&*@＠]|(?:^|[^a-zA-Z0-9_+~.-])(?:rt|RT|rT|Rt):?)([@＠])(?=\w)/g, '$1 '),
+        };
       });
-      data.commentary = data.commentary.map(commentary => {
+      data.commentary = data.commentary.map((commentary) => {
         return {
           ...commentary,
-          username: commentary.username.replace(/(?<=^|[^a-zA-Z0-9_!#$%&*@＠]|(?:^|[^a-zA-Z0-9_+~.-])(?:rt|RT|rT|Rt):?)([@＠])(?=\w)/g, "$1 ")
-        }
+          username: commentary.username.replace(/(?<=^|[^a-zA-Z0-9_!#$%&*@＠]|(?:^|[^a-zA-Z0-9_+~.-])(?:rt|RT|rT|Rt):?)([@＠])(?=\w)/g, '$1 '),
+        };
       });
       return data;
     });

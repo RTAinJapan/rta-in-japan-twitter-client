@@ -40,7 +40,7 @@ export type ActionProps = {
 
 type PropsType = ComponentProps & ActionProps;
 
-const TweetList: React.SFC<PropsType> = (props) => {
+const TweetList: React.FC<PropsType> = (props) => {
   const classes = useStyles();
 
   const label = {

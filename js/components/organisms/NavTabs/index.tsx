@@ -17,6 +17,7 @@ const useStyles = makeStyles({
 });
 
 type ComponentProps = {
+  children: React.ReactNode;
   style: {
     top?: number;
     bottom?: number;
@@ -27,7 +28,7 @@ type ComponentProps = {
   }[];
 };
 
-const NavTabs: React.SFC<ComponentProps & React.Props<{}>> = (props) => {
+const NavTabs: React.FC<ComponentProps> = (props) => {
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState(0);
 

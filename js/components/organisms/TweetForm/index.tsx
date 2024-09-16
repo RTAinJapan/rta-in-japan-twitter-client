@@ -68,7 +68,7 @@ type ComponentProps = ReturnType<typeof mapStateToProps>;
 type ActionProps = typeof mapDispatchToProps;
 
 type PropsType = ComponentProps & ActionProps;
-const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
+const TweetForm: React.FC<PropsType> = (props: PropsType) => {
   const classes = useStyles(props.theme.theme);
 
   // ツイート内容
@@ -210,7 +210,16 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
     <div className={classes.root}>
       {/* テキストボックス */}
       <div>
-        <Dropzone accept="image/gif,image/jpeg,image/png,image/jpg,video/mp4" onDrop={handleDrop as any} noClick={true}>
+        <Dropzone
+          accept={{
+            'image/gif': ['.gif'],
+            'image/jpeg': ['.jpg', '.jpeg'],
+            'image/png': ['.png'],
+            'video/mp4': ['.mp4'],
+          }}
+          onDrop={handleDrop as any}
+          noClick={true}
+        >
           {({ getRootProps, getInputProps }) => (
             <section>
               <div {...getRootProps()}>
@@ -244,14 +253,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
-            <Tweet
-              id={props.replyTweet.id}
-              text={props.replyTweet.text}
-              created_at={props.replyTweet.created_at}
-              entities={props.replyTweet.entities}
-              media={props.replyTweet.media}
-              user={props.replyTweet.user}
-            />
+            <Tweet id={props.replyTweet.id} text={props.replyTweet.text} created_at={props.replyTweet.created_at} username={props.replyTweet.username} />
           </div>
         </Paper>
       ) : (
@@ -267,14 +269,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
-            <Tweet
-              id={props.retweet.id}
-              text={props.retweet.text}
-              created_at={props.retweet.created_at}
-              media={props.retweet.media}
-              entities={props.retweet.entities}
-              user={props.retweet.user}
-            />
+            <Tweet id={props.retweet.id} text={props.retweet.text} created_at={props.retweet.created_at} username={props.retweet.username} />
           </div>
         </Paper>
       ) : (
@@ -282,7 +277,15 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
       )}
       {/* アップロード */}
       <div>
-        <Dropzone accept="image/gif,image/jpeg,image/png,image/jpg,video/mp4" onDrop={handleDrop as any}>
+        <Dropzone
+          accept={{
+            'image/gif': ['.gif'],
+            'image/jpeg': ['.jpg', '.jpeg'],
+            'image/png': ['.png'],
+            'video/mp4': ['.mp4'],
+          }}
+          onDrop={handleDrop as any}
+        >
           {({ getRootProps, getInputProps }) => (
             <section>
               <div {...getRootProps()}>

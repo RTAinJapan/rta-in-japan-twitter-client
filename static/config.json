@@ -1,22 +1,37 @@
 {
   "api": {
-    "twitterBase": "http://localhost:8000/api/twitter/",
-    "runner": "https://script.google.com/macros/s/xxxxxxxxxxxxxxxxxxxxxxxxxx/exec",
-    "webhook": "https://discord.com/api/webhooks/xxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxx"
+    "twitterBase": "https://twitter.rtaij.app",
+    "runner": "https://rtain.jp/api/ajax/?url=https://script.google.com/macros/s/AKfycbzqqB42o3K_Qy4ICo31JmJioKdwFBgqJtIZpdOA9dXTd9QFJosPEcHKJlDitojIyKbw/exec",
+    "webhook": "https://discord.com/api/webhooks/1004796868208906381/elM5ewAr9AK34W_3m_sPJp0CnD79UuLWJWePMStgbiiC2TcptK7iZw7dvIciHrr6Qf6t"
   },
   "twitter": {
-    "isAllowDeleteTweet": false
+    "isAllowDeleteTweet": true
   },
   "discord": {
+    "enable": false,
     "config": {
-      "clientId": "",
+      "clientId": "627778242727641088",
       "clientSecret": "",
-      "redirectUrl": "",
+      "redirectUrl": "https://rtain.jp/util/twitter/login/discord",
       "scope": "identify%20guilds"
     },
-    "guild": "",
-    "roles": [],
-    "users": []
+    "guild": "247368306896404480",
+    "roles": [
+      "247369833300230144",
+      "640861896995766272"
+    ],
+    "users": [
+      "153506819317301248",
+      "159600065017675778",
+      "142622240863813632",
+      "204527119445786626",
+      "258600299491491842",
+      "242075173275041792",
+      "131399322360217600",
+      "263950176950026250",
+      "163962550780821506",
+      "767386043531657216"
+    ]
   },
   "tweetTemplate": [
     {

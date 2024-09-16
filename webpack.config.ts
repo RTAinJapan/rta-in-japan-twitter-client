@@ -3,113 +3,120 @@ import webpackDevServer from 'webpack-dev-server';
 import TerserPlugin from 'terser-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import path from 'path';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
+import CopyPlugin from 'copy-webpack-plugin';
 import WorkboxWebpackPlugin from 'workbox-webpack-plugin';
 
 interface Configuration extends webpack.Configuration {
   devServer?: webpackDevServer.Configuration;
 }
 
-const isProduction = process.env.NODE_ENV === 'production';
+const config = (env: Object, argv: {mode: string}): Configuration => {
 
-const commonConfig: Partial<Configuration> = {
-  mode: isProduction ? 'production' : 'development',
-  devtool: isProduction ? 'inline-source-map' : 'source-map',
-  resolve: {
-    extensions: ['.js', '.ts', '.tsx'],
-  },
-};
+  const isProduction = argv.mode === 'production';
+  console.log(`mode = ${argv.mode}`);
 
-// webpack-dev-serverの設定
-const devServerConfig: webpackDevServer.Configuration = {
-  contentBase: 'docs',
-  host: 'localhost',
-  port: 3000,
-  open: true,
-  hot: true,
-};
+  // webpack-dev-serverの設定
+  const devServerConfig: webpackDevServer.Configuration = {
+    // host: 'localhost', // macだとこれ指定すると繋がらなくなる
+    open: true,
+    hot: true,
+    static: {
+      directory: path.join(__dirname, 'build'),
+    },
+  };
 
-const config: Configuration = {
-  ...commonConfig,
-  devServer: devServerConfig,
+  const config: Configuration = {
+    mode: isProduction ? 'production' : 'development',
+    devtool: isProduction ? false : 'source-map',
+    resolve: {
+      extensions: ['.js', '.ts', '.tsx'],
+    },
+    devServer: devServerConfig,
+    watchOptions: {
+      aggregateTimeout: 200,
+      poll: 1000
+    },
 
-  entry: path.resolve('./js/index.tsx'),
-  output: {
-    path: path.resolve(`./build/`),
-    filename: 'main.js',
-  },
-  module: {
-    rules: [
-      // TypeScript
-      {
-        test: /\.tsx?$/,
-        loader: 'ts-loader',
-        options: {
-          transpileOnly: true,
-        },
-      },
-      // CSS
-      {
-        test: /\.css/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              url: false,
-            },
+    entry: path.resolve('./js/index.tsx'),
+    output: {
+      path: path.resolve(`./build/`),
+      filename: 'main.js',
+    },
+    module: {
+      rules: [
+        // TypeScript
+        {
+          test: /\.tsx?$/,
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: true,
           },
-        ],
-      },
-      // 画像ファイル
-      {
-        test: /\.png/,
-        use: ['url-loader'],
-      },
-    ],
-  },
-  node: {
-    fs: 'empty',
-  },
-  optimization: {
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          ecma: 5,
-          // warnings: false,
-          parse: {},
-          compress: {},
-          mangle: true,
-          module: false,
-          // output: null,
-          toplevel: false,
-          // nameCache: null,
-          ie8: false,
-          keep_classnames: undefined,
-          keep_fnames: true,
-          safari10: true,
         },
+        // CSS
+        {
+          test: /\.css/,
+          use: [
+            'style-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                url: false,
+              },
+            },
+          ],
+        },
+        // 画像ファイル
+        {
+          test: /\.png/,
+          use: ['url-loader'],
+        },
+      ],
+    },
+    optimization: {
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            // ecma: 6,
+            // warnings: false,
+            parse: {},
+            compress: {},
+            mangle: true,
+            module: false,
+            // output: null,
+            toplevel: false,
+            // nameCache: null,
+            ie8: false,
+            keep_classnames: undefined,
+            keep_fnames: true,          
+          }
+        })
+      ],
+    },
+    plugins: [
+      new ForkTsCheckerWebpackPlugin(),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: './static',
+            to: '',
+          },
+        ]
       }),
     ],
-  },
-  plugins: [
-    new ForkTsCheckerWebpackPlugin({
-      useTypescriptIncrementalApi: true,
-      tsconfig: './tsconfig.json',
-      checkSyntacticErrors: true,
-      reportFiles: ['src/**'],
-    }),
-    new CopyWebpackPlugin([
-      {
-        from: './static',
-        to: '',
-      },
-    ]),
-    new WorkboxWebpackPlugin.GenerateSW({
-      maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
-      exclude: ['config.json.*'], // キャッシュ対象から除外
-    }),
-  ],
+  }
+
+  const workbox = new WorkboxWebpackPlugin.GenerateSW({
+    maximumFileSizeToCacheInBytes: 500 * 1024 * 1024,
+    runtimeCaching: [],
+  });
+
+  if(isProduction) {
+    config.plugins?.push(workbox);
+  }
+ 
+  return config;
 };
 
-export default [config];
+
+export default (env: any, argv: any) => config(env, argv);

@@ -57,7 +57,7 @@ type ComponentProps = ReturnType<typeof mapStateToProps>;
 type ActionProps = typeof mapDispatchToProps;
 
 type PropsType = ComponentProps & ActionProps;
-const App: React.SFC<PropsType> = (props: PropsType) => {
+const App: React.FC<PropsType> = (props: PropsType) => {
   const classes = useStyles(props.theme);
 
   const label = {

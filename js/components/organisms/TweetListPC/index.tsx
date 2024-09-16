@@ -34,7 +34,7 @@ type ComponentProps = ReturnType<typeof mapStateToProps>;
 type ActionProps = typeof mapDispatchToProps;
 
 type PropsType = ComponentProps & ActionProps;
-const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
+const TweetListPC: React.FC<PropsType> = (props: PropsType) => {
   const classes = useStyles(props.theme.theme);
 
   return (

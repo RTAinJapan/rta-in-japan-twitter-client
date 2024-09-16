@@ -43,7 +43,7 @@ type ActionProps = {
 };
 
 type PropsType = ComponentProps & ActionProps;
-const Tweet: React.SFC<PropsType> = (props: PropsType) => {
+const Tweet: React.FC<PropsType> = (props: PropsType) => {
   const classes = useStyles();
 
   const handleReplyButton = (id: string) => () => {

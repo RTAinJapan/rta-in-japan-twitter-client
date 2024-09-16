@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 /* eslint-disable prefer-rest-params */
-/* eslint-disable use-isnan */
+
 /**
  * @author Extended, bugfixed and ported to TypeScript by Ikaros Kappler.
  * @modified 2018-xx-xx Added a clone() function.
@@ -250,7 +250,7 @@ export class Color {
   // --- Modifiers ----------------------------------
 
   saturate(v: string | number): void {
-    if ('string' == typeof v && v.indexOf('%') > -1 && (v = parseInt(v)) != NaN) this.s += v / 100;
+    if ('string' == typeof v && v.indexOf('%') > -1 && !Number.isNaN((v = parseInt(v)))) this.s += v / 100;
     else if ('number' == typeof v)
       // range 255
       this.s += v / 255;
@@ -263,7 +263,7 @@ export class Color {
     this.saturate('-' + v);
   }
   lighten(v: string | number): void {
-    if ('string' == typeof v && v.indexOf('%') > -1 && (v = parseInt(v)) != NaN) this.l += v / 100;
+    if ('string' == typeof v && v.indexOf('%') > -1 && !Number.isNaN((v = parseInt(v)))) this.l += v / 100;
     else if ('number' == typeof v)
       // range 255
       this.l += v / 255;
@@ -276,7 +276,7 @@ export class Color {
     this.lighten('-' + v);
   }
   fadein(v: string | number): void {
-    if ('string' == typeof v && v.indexOf('%') > -1 && (v = parseInt(v)) != NaN) this.a += v / 100;
+    if ('string' == typeof v && v.indexOf('%') > -1 && !Number.isNaN((v = parseInt(v)))) this.a += v / 100;
     else if ('number' == typeof v)
       // range 255
       this.a += v / 255;
@@ -289,7 +289,7 @@ export class Color {
     this.fadein('-' + v);
   }
   spin(v: string | number): void {
-    if ('string' == typeof v && v.indexOf('%') > -1 && (v = parseInt(v)) != NaN) this.h += v / 100;
+    if ('string' == typeof v && v.indexOf('%') > -1 && !Number.isNaN((v = parseInt(v)))) this.h += v / 100;
     else if ('number' == typeof v)
       // range 360
       this.h += v / 360;
@@ -384,12 +384,12 @@ export class Color {
       for (let i = 0; i < arguments.length; i++) {
         let c = arguments[i];
         if ('string' == typeof c && c.indexOf('%') > -1) {
-          if ((c = parseInt(c)) == NaN) throw new Error('Bad format');
+          if (Number.isNaN((c = parseInt(c)))) throw new Error('Bad format');
           if (c < 0 || c > 100) throw new Error('Bad format');
           o[i] = c / 100;
         } else {
           // console.log( 'allAreFrac', allAreFrac, arguments );
-          if ('string' == typeof c && (c = parseInt(c)) == NaN) throw new Error('Bad format');
+          if ('string' == typeof c && Number.isNaN((c = parseInt(c)))) throw new Error('Bad format');
           if (c < 0) throw new Error('Bad format');
           //else if( allAreFrac ) o[i] = c; // c >= 0 && c <= 1 (all)
           else if (c >= 0 && c < 1) o[i] = c;
@@ -408,16 +408,16 @@ export class Color {
       let h = arguments[0],
         s = arguments[1],
         l = arguments[2];
-      if ('string' == typeof h && (h = parseFloat(h)) == NaN) throw new Error('Bad format for hue');
+      if ('string' == typeof h && Number.isNaN((h = parseFloat(h)))) throw new Error('Bad format for hue');
       if (h < 0 || h > 360) throw new Error('Hue out of range (0..360)');
       else if ((('' + h).indexOf('.') > -1 && h > 1) || ('' + h).indexOf('.') == -1) h /= 360;
       if ('string' == typeof s && s.indexOf('%') > -1) {
-        if ((s = parseInt(s)) == NaN) throw new Error('Bad format for saturation');
+        if (Number.isNaN((s = parseInt(s)))) throw new Error('Bad format for saturation');
         if (s < 0 || s > 100) throw new Error('Bad format for saturation');
         s /= 100;
       } else if (s < 0 || s > 1) throw new Error('Bad format for saturation');
       if ('string' == typeof l && l.indexOf('%') > -1) {
-        if ((l = parseInt(l)) == NaN) throw new Error('Bad format for lightness');
+        if (Number.isNaN((l = parseInt(l)))) throw new Error('Bad format for lightness');
         if (l < 0 || l > 100) throw new Error('Bad format for lightness');
         l /= 100;
       } else if (l < 0 || l > 1) throw new Error('Bad format for lightness');

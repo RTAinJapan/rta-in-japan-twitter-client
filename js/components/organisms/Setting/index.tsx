@@ -25,7 +25,7 @@ type ComponentProps = ReturnType<typeof mapStateToProps>;
 type ActionProps = typeof mapDispatchToProps;
 
 type PropsType = ComponentProps & ActionProps;
-const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
+const TweetForm: React.FC<PropsType> = (props: PropsType) => {
   const classes = useStyles();
   const lightTheme = customTheme('light');
   const darkTheme = customTheme('dark');

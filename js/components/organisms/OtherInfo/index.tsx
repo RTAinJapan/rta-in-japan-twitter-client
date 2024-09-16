@@ -22,7 +22,7 @@ type ActionProps = typeof mapDispatchToProps;
 
 type PropsType = ComponentProps & ActionProps;
 
-export const OtherInfo: React.SFC<PropsType> = (props) => {
+export const OtherInfo: React.FC<PropsType> = (props) => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -30,7 +30,7 @@ export const OtherInfo: React.SFC<PropsType> = (props) => {
         {props.linkList.map((link, index) => {
           return (
             <div key={index}>
-              <ListItem button onClick={() => window.open(link.url)}>
+              <ListItem onClick={() => window.open(link.url)}>
                 <ListItemIcon>
                   <img src={link.iconUrl} height={30} />
                 </ListItemIcon>
