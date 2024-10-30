@@ -1,4 +1,4 @@
-FROM node:21-slim
+FROM node:22-slim
 
 ARG USERNAME=vscode
 ARG USER_UID=1100
