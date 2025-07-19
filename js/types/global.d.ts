@@ -30,33 +30,8 @@ export type RunnersAPI = { status: string; version: string; data: Game[] };
 export type Config = {
   /** APIの設定 */
   api: {
-    /** TwitterAPIのURL */
-    twitterBase: string;
     /** 走者情報APIのURL */
     runner: string;
-    /** WebhookのURL */
-    webhook: string;
-  };
-  twitter: {
-    /** ツイート削除の許可 */
-    isAllowDeleteTweet: boolean;
-  };
-  /** Discordの設定 */
-  discord: {
-    enable: boolean;
-    config: {
-      baseUrl: string;
-      clientId: string;
-      clientSecret: string;
-      redirectUrl: string;
-      scope: string;
-    };
-    /** サーバID */
-    guild: string;
-    /** 権限ID */
-    roles: string[];
-    /** この画面を操作できるユーザID。 */
-    users: string[];
   };
   tweetTemplate: {
     title: string;
@@ -65,9 +40,4 @@ export type Config = {
     additional?: string;
   }[];
   tweetFooter: string;
-  link: {
-    name: string;
-    url: string;
-    iconUrl: string;
-  }[];
 };

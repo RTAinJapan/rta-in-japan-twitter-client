@@ -18,7 +18,7 @@ const Footer: React.FC<PropsType> = (props: PropsType) => {
   const classes = useStyles();
 
   const label = {
-    copyright: '© 2019 RTA in Japan All rights reserved.',
+    copyright: '© 2025 RTA in Japan All rights reserved.',
   };
 
   return (

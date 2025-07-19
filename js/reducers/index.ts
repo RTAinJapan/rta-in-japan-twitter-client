@@ -33,11 +33,6 @@ export type GlobalState = {
     /** 手動で閉じられるか */
     closable: boolean;
   };
-  /** Discord */
-  discord: {
-    username: string | null;
-    token: string | null;
-  };
   /** ダイアログ */
   dialog: DialogState;
   /** ツイート一覧 */
@@ -98,10 +93,6 @@ const initial: GlobalState = {
     message: '',
     detail: '',
   },
-  discord: {
-    username: null,
-    token: null,
-  },
   twitterTimeline: {
     user: [],
     mention: [],
@@ -121,29 +112,10 @@ const initial: GlobalState = {
   game: [],
   config: {
     api: {
-      twitterBase: '',
       runner: '',
-      webhook: '',
-    },
-    twitter: {
-      isAllowDeleteTweet: false,
-    },
-    discord: {
-      enable: true,
-      config: {
-        baseUrl: '',
-        clientId: '',
-        clientSecret: '',
-        redirectUrl: '',
-        scope: '',
-      },
-      guild: '',
-      roles: [],
-      users: [],
     },
     tweetTemplate: [],
     tweetFooter: '',
-    link: [],
   },
   theme: {
     mode: 'light',
@@ -194,103 +166,11 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
         },
       };
     }
-    case getType(actions.addReplyTweet): {
-      return {
-        ...state,
-        post: {
-          ...state.post,
-          in_reply_to_status_id: action.payload,
-        },
-      };
-    }
-    case getType(actions.deleteReplyTweet): {
-      return {
-        ...state,
-        post: {
-          ...state.post,
-          in_reply_to_status_id: null,
-        },
-      };
-    }
-    case getType(actions.addAttachUrl): {
-      return {
-        ...state,
-        post: {
-          ...state.post,
-          attachment_tweet: action.payload,
-        },
-      };
-    }
-    case getType(actions.deleteAttachUrl): {
-      return {
-        ...state,
-        post: {
-          ...state.post,
-          attachment_tweet: null,
-        },
-      };
-    }
-    case getType(actions.storeMedia): {
-      return {
-        ...state,
-        post: {
-          ...state.post,
-          media: action.payload,
-        },
-      };
-    }
-    case getType(actions.storeDiscordUserName): {
-      return {
-        ...state,
-        discord: {
-          ...state.discord,
-          username: action.payload,
-        },
-      };
-    }
+
     case getType(actions.updateGameList): {
       return {
         ...state,
         game: action.payload,
-      };
-    }
-    case getType(actions.updateTheme): {
-      localStorage.setItem('theme', action.payload);
-      return {
-        ...state,
-        theme: {
-          mode: action.payload,
-          theme: customTheme(action.payload),
-        },
-      };
-    }
-    case getType(actions.showMedia): {
-      return {
-        ...state,
-        mediaPreview: {
-          isShow: true,
-          showIndex: action.payload.index,
-          media: action.payload.media,
-        },
-      };
-    }
-    case getType(actions.closeMedia): {
-      return {
-        ...state,
-        mediaPreview: {
-          isShow: false,
-          showIndex: 0,
-          media: [],
-        },
-      };
-    }
-    case getType(actions.changeMediaIndex): {
-      return {
-        ...state,
-        mediaPreview: {
-          ...state.mediaPreview,
-          showIndex: action.payload,
-        },
       };
     }
     default:

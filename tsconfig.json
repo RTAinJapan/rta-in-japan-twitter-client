@@ -4,7 +4,7 @@
     "types": [
       "node"
     ],
-    "target": "ES5",
+    "target": "es2016",
     "allowJs": true,
     "jsx": "react",
     "moduleResolution": "node",

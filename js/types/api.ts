@@ -26,14 +26,6 @@ export type Statuses = {
   // quoted_status?: Statuses;
 };
 
-// export type User = {
-//   created_at: string;
-//   id: string;
-//   name: string;
-//   username: string;
-//   profile_image_url: string;
-// };
-
 export type StatusesEntities = {
   annotations: [];
   urls: {
@@ -95,47 +87,6 @@ export type Media = {
     url: string;
   }[];
 };
-
-// export type Media = {
-//   display_url: string;
-//   expanded_url: string;
-//   id: string;
-//   indices: [number, number];
-//   /** 画像のURL。動画のときも画像 */
-//   media_url_http: string;
-//   /** 画像のURL。動画のときも画像 */
-//   media_url_https: string;
-//   sizes: {
-//     large: MediaSize;
-//     medium: MediaSize;
-//     small: MediaSize;
-//     thumb: MediaSize;
-//   };
-//   type: 'photo' | 'video';
-//   /** mediaのURL。ブラウザで開くときのURLで短縮URL形式。textにも含まれてる。 */
-//   url: string;
-//   /** 動画情報。type:videoの時だけkeyがある */
-//   video_info?: {
-//     /** 16, 9みたいなの */
-//     aspect_ratio: [number, number];
-//     /** 動画の長さ(ミリ秒) */
-//     duration_millis: number;
-//     variants: {
-//       /** ビットレート */
-//       bitrate: number;
-//       /** @example "video/mp4" */
-//       content_type: string;
-//       /** mp4とかのURL */
-//       url: string;
-//     }[];
-//   };
-// };
-
-// type MediaSize = {
-//   w: number;
-//   h: number;
-//   resize: 'fit' | 'crop';
-// };
 
 export type RequestUpdate = {
   /**
