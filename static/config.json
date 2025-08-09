@@ -1,6 +1,6 @@
 {
   "api": {
-    "runner": "https://rtain.jp/api/ajax/?url=https://script.google.com/macros/s/AKfycbzZBa3BRLJBx7ooCYT4Wuqq8BVqgVToFPTZzch3K8NgLthZMH5g7JzqRMNUAFQb0OKC/exec"
+    "runner": ""
   },
   "tweetTemplate": [
     {
@@ -43,6 +43,11 @@
       "title": "ゲーム中",
       "type": "common",
       "text": "現在のタイムアタックは『{game}』\n\n"
+    },
+    {
+      "title": "バックアップ挿入",
+      "type": "common",
+      "text": "【バックアップ追加のお知らせ】\n「xxx」の終了後、バックアップとして『{game}』を追加いたします。\n\n"
     }
   ],
   "tweetFooter": "配信はこちらから⇒https://www.twitch.tv/rtainjapan\n#RTAinJapan"
